@@ -1,0 +1,128 @@
+import { useState } from "react";
+import styled, { css } from "styled-components";
+import ModalContainer from "../generic/ModalContainer";
+import Text from "../generic/Text";
+import ModalRegAuth from "../modal/ModalRegAuth";
+import back from "./images/header_back_1.png";
+import heartSvg from "./images/heart_1.svg";
+
+interface HeaderProps {
+  size: "small" | "big";
+}
+
+export default function Header({ size }: HeaderProps) {
+  const [isAuth, setIsAuth] = useState<boolean>(true);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [isRequestToAdmin, setIsRequestToAdmin] = useState<boolean>(false);
+
+  return (
+    <>
+      <HeaderBlock size={size} back={back}>
+        <Menu size={size}>
+          {size === "small" ? (
+            <Text size={28} lh={34} color="#DECDA9">
+              Events.by
+            </Text>
+          ) : (
+            <p></p>
+          )}
+          <RightMenu>
+            <Button heartSvg={heartSvg}>Избранное</Button>
+            <Button onClick={() => setModalIsOpen(true)} ml={60} underline>
+              Вход
+            </Button>
+          </RightMenu>
+        </Menu>
+        {size === "big" && (
+          <About>
+            <Text size={64} color="#DECDA9">
+              Events.by
+            </Text>
+            <Text width={507} lh={38} size={24} mt={28}>
+              Афиша мероприятий в городе Минске на любой вкус!
+            </Text>
+          </About>
+        )}
+      </HeaderBlock>
+      <ModalContainer
+        setIsAuth={setIsAuth}
+        setIsRequestToAdmin={setIsRequestToAdmin}
+        isOpen={modalIsOpen}
+        setIsOpen={setModalIsOpen}
+      >
+        <ModalRegAuth
+          isAuth={isAuth}
+          setIsAuth={setIsAuth}
+          isRequestToAdmin={isRequestToAdmin}
+          setIsRequestToAdmin={setIsRequestToAdmin}
+        />
+      </ModalContainer>
+    </>
+  );
+}
+
+const HeaderBlock = styled.header<{ back: string; size: string }>`
+  background-image: url(${(p) => p.back});
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #004945;
+  width: 100%;
+  position: relative;
+
+  height: ${(p) => (p.size === "big" ? "490" : "85")}px;
+`;
+
+const About = styled.div`
+  position: absolute;
+  right: 0;
+  margin-right: 110px;
+`;
+
+const RightMenu = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Menu = styled.div<{ size: string }>`
+  display: flex;
+  justify-content: space-between;
+  max-width: 1350px;
+  align-items: center;
+  margin-bottom: 95px;
+
+  padding: ${(p) => (p.size === "big" ? "45px 40px 0" : "0 20px")};
+
+  ${(p) => p.size === "small" && "height: 100%;"};
+`;
+
+const Button = styled.p<{
+  underline?: boolean;
+  ml?: number;
+  heartSvg?: string;
+}>`
+  color: #decda9;
+  font-size: 16px;
+  letter-spacing: 0.205em;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  ${(p) => p.underline && `text-decoration: underline;`}
+  ${(p) => p.ml && `margin-left: ${p.ml}px;`}
+
+  ${(p) =>
+    p.heartSvg &&
+    css`
+      position: relative;
+      display: flex;
+      align-items: center;
+      &::after {
+        content: url(${p.heartSvg});
+        position: relative;
+        margin-left: 8px;
+        top: 1px;
+      }
+    `}
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
