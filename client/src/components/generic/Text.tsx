@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: React.ReactNode;
@@ -17,6 +17,7 @@ interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   color?: string;
   lh?: number | null;
   width?: number;
+  onClick?: React.MouseEventHandler<HTMLParagraphElement> | undefined;
 }
 
 export default function Text({
@@ -36,6 +37,7 @@ export default function Text({
   color = "",
   lh = null,
   width = 0,
+  onClick = undefined,
 }: TextProps) {
   return (
     <P
@@ -54,6 +56,7 @@ export default function Text({
       color={color}
       lh={lh}
       width={width}
+      onClick={onClick}
     >
       {children}
     </P>
@@ -77,4 +80,12 @@ const P = styled.p<TextProps>`
   ${(p) => p.lh && `line-height: ${p.lh}px;`}
   ${(p) => p.underline && `text-decoration: underline;`}
   ${(p) => p.width && `width: ${p.width}px;`}
+
+  ${(p) =>
+    p.onClick &&
+    css`
+      &:hover {
+        cursor: pointer;
+      }
+    `}
 `;

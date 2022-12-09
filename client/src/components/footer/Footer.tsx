@@ -7,7 +7,7 @@ type TermsType = {
 
 const terms: TermsType[] = [
   {
-    name: "© Copyright 2015 - 2020",
+    name: "© Copyright 2015 - 2022",
   },
   {
     name: "ALL RIGHTS RESERVED",
@@ -23,7 +23,7 @@ export default function Footer() {
       <Content>
         <Row>
           {terms.map((term: TermsType) => (
-            <Text key={term.name} color="#FAFAFA" lh={33} size={14}>
+            <Text key={term.name} color="#FAFAFA" lh={33} size={12}>
               {term.name}
             </Text>
           ))}
@@ -39,9 +39,9 @@ const Block = styled.footer`
 `;
 
 const Content = styled.div`
-  max-width: 575px;
+  max-width: 500px;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 30px 0;
 `;
 
 const Row = styled.div`

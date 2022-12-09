@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { Category, OneNews } from "../../types";
+import { CategoryType, OneNewsType } from "../../types";
 import Text from "../generic/Text";
 import newsImage from "./images/news_image.png";
-import cinema from "./images/cinema.png";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const news: Array<OneNews> = [
+const news: Array<OneNewsType> = [
   {
     id: 0,
     image: newsImage,
@@ -22,40 +23,34 @@ const news: Array<OneNews> = [
   },
 ];
 
-const categories: Array<Category> = [
-  {
-    id: 0,
-    image: cinema,
-    title: "Кино",
-  },
-  {
-    id: 1,
-    image: cinema,
-    title: "Театр",
-  },
-  {
-    id: 2,
-    image: cinema,
-    title: "Выставки",
-  },
-  {
-    id: 3,
-    image: cinema,
-    title: "Цирк",
-  },
-  {
-    id: 4,
-    image: cinema,
-    title: "Мастер-классы",
-  },
-];
+interface MainMenuProps {
+  setShowBigHeader: (flag: boolean) => void;
+  categories: CategoryType[];
+}
 
-export default function MainMenu() {
+export default function MainMenu({
+  setShowBigHeader,
+  categories,
+}: MainMenuProps) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setShowBigHeader(true);
+
+    return () => {
+      setShowBigHeader(false);
+    };
+  }, []);
+
+  function chooseCategory(category: string) {
+    navigate(`${category}`);
+  }
+
   return (
     <>
       <Title>Новости</Title>
       <Content>
-        {news.map((news: OneNews) => (
+        {news.map((news: OneNewsType) => (
           <News key={news.id}>
             <Img src={news.image} alt="news_image" />
             <Text size={16} lh={20} color="#335250">
@@ -66,8 +61,12 @@ export default function MainMenu() {
       </Content>
       <Title>Категории</Title>
       <Categories>
-        {categories.map((category: Category) => (
-          <CategoryBlock key={category.id} image={category.image}>
+        {categories.map((category: CategoryType) => (
+          <CategoryBlock
+            onClick={() => chooseCategory(category.link)}
+            key={category.id}
+            image={category.image}
+          >
             <Text color="#FFFFFF" size={24}>
               {category.title}
             </Text>

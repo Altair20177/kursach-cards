@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import ModalContainer from "../generic/ModalContainer";
 import Text from "../generic/Text";
@@ -15,19 +16,31 @@ export default function Header({ size }: HeaderProps) {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [isRequestToAdmin, setIsRequestToAdmin] = useState<boolean>(false);
 
+  const navigate = useNavigate();
+
   return (
     <>
       <HeaderBlock size={size} back={back}>
         <Menu size={size}>
           {size === "small" ? (
-            <Text size={28} lh={34} color="#DECDA9">
+            <Text
+              onClick={() => navigate("/main")}
+              size={28}
+              lh={34}
+              color="#DECDA9"
+            >
               Events.by
             </Text>
           ) : (
             <p></p>
           )}
           <RightMenu>
-            <Button heartSvg={heartSvg}>Избранное</Button>
+            <Button
+              onClick={() => navigate("/main/favorites")}
+              heartSvg={heartSvg}
+            >
+              Избранное
+            </Button>
             <Button onClick={() => setModalIsOpen(true)} ml={60} underline>
               Вход
             </Button>
@@ -88,6 +101,7 @@ const Menu = styled.div<{ size: string }>`
   justify-content: space-between;
   max-width: 1350px;
   align-items: center;
+  margin: 0 auto;
   margin-bottom: 95px;
 
   padding: ${(p) => (p.size === "big" ? "45px 40px 0" : "0 20px")};
