@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
+import Message from "../generic/Message";
 import ModalContainer from "../generic/ModalContainer";
 import Text from "../generic/Text";
 import ModalRegAuth from "../modal/ModalRegAuth";
@@ -15,8 +16,19 @@ export default function Header({ size }: HeaderProps) {
   const [isAuth, setIsAuth] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [isRequestToAdmin, setIsRequestToAdmin] = useState<boolean>(false);
+  const [isUserAuthorized, setIsUserAuthorized] = useState<boolean>(false);
+  const [showMessage, setShowMessage] = useState<boolean>(false);
 
   const navigate = useNavigate();
+
+  function onFavouriteClick() {
+    if (isUserAuthorized) {
+      navigate("/main/favorites");
+    } else {
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 4000);
+    }
+  }
 
   return (
     <>
@@ -35,10 +47,7 @@ export default function Header({ size }: HeaderProps) {
             <p></p>
           )}
           <RightMenu>
-            <Button
-              onClick={() => navigate("/main/favorites")}
-              heartSvg={heartSvg}
-            >
+            <Button onClick={onFavouriteClick} heartSvg={heartSvg}>
               Избранное
             </Button>
             <Button onClick={() => setModalIsOpen(true)} ml={60} underline>
@@ -70,6 +79,7 @@ export default function Header({ size }: HeaderProps) {
           setIsRequestToAdmin={setIsRequestToAdmin}
         />
       </ModalContainer>
+      {showMessage && <Message>Необходимо авторизоваться!</Message>}
     </>
   );
 }

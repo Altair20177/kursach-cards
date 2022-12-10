@@ -37,7 +37,7 @@ const categories: Array<CategoryType> = [
     id: 4,
     image: cinema,
     title: "Мастер-классы",
-    link: "masters",
+    link: "master-classes",
   },
 ];
 

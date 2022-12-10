@@ -98,7 +98,6 @@ const Container = styled.div`
 const Carusel = styled.div``;
 
 const CardsContainer = styled.div`
-  margin-top: 50px;
   display: grid;
   grid-template-columns: repeat(4, 25%);
 `;

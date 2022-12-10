@@ -47,9 +47,13 @@ class OrganizationController {
     }
   }
 
-  async getOne(req, res) {}
-
-  async getAll(req, res) {}
+  async getOne(req, res) {
+    const { id } = req.params;
+    const organization = await Organization.findOne({
+      where: { id },
+    });
+    return res.json(organization);
+  }
 }
 
 module.exports = new OrganizationController();
