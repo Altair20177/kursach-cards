@@ -3,48 +3,28 @@ import Header from "./components/headers/Header";
 import MainMenu from "./components/mainMenu/MainMenu";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Cards from "./components/cards/Cards";
-import { useState } from "react";
-import { CategoryType } from "./types";
-import cinema from "./components/mainMenu/images/cinema.png";
+import { useEffect, useState } from "react";
 import Favorites from "./components/cards/Favorites";
-
-const categories: Array<CategoryType> = [
-  {
-    id: 0,
-    image: cinema,
-    title: "Кино",
-    link: "cinema",
-  },
-  {
-    id: 1,
-    image: cinema,
-    title: "Театр",
-    link: "theatre",
-  },
-  {
-    id: 2,
-    image: cinema,
-    title: "Выставки",
-    link: "exhibitions",
-  },
-  {
-    id: 3,
-    image: cinema,
-    title: "Цирк",
-    link: "circus",
-  },
-  {
-    id: 4,
-    image: cinema,
-    title: "Мастер-классы",
-    link: "master-classes",
-  },
-];
+import AdminPanel from "./pages/AdminPanel";
+import AdminInputs from "./components/admin/AdminInputs";
+import AdminCards from "./components/admin/AdminCards";
+import { check } from "./http/userAPI";
+import { useAppDispatch } from "./store/hooks";
+import { authorizeUser, setUserData } from "./store/userSlice";
 
 function App() {
+  const dispatch = useAppDispatch();
   const [showBigHeader, setShowBigHeader] = useState<boolean>(
     window.location.pathname === "/main" ? true : false
   );
+
+  useEffect(() => {
+    localStorage.getItem("token") &&
+      check().then((data) => {
+        dispatch(authorizeUser(true));
+        dispatch(setUserData(data));
+      });
+  }, []);
 
   return (
     <>
@@ -55,16 +35,23 @@ function App() {
           path="/main"
           element={
             <MainMenu
-              categories={categories}
               setShowBigHeader={setShowBigHeader}
             />
           }
         />
         <Route
           path="/main/:category"
-          element={<Cards categories={categories} />}
+          element={<Cards />}
         />
         <Route path="/main/favorites" element={<Favorites />} />
+        <Route path="/admin" element={<AdminPanel />}>
+          <Route path="managing-panel" element={<div>flgdg</div>} />
+          <Route path="requests" element={<div>flgdg</div>} />
+          <Route path="cards-to-accept" element={<AdminCards />} />
+          <Route path="published-cards" element={<AdminCards />} />
+          <Route path="publish-new-card" element={<AdminInputs />} />
+          <Route path="update-profile" element={<AdminInputs />} />
+        </Route>
       </Routes>
       <Footer />
     </>

@@ -1,40 +1,110 @@
 import styled from "styled-components";
-import { CategoryType, OneNewsType } from "../../types";
+import { CategoryType, CategoryTypeFetch, OneNewsType } from "../../types";
 import Text from "../generic/Text";
-import newsImage from "./images/news_image.png";
+import firstNews from "./images/news/firstNews.png";
+import secondNews from "./images/news/secondNews.png";
+import thirdNews from "./images/news/thirdNews.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { fetchCategories } from "../../http/categoriesApi";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setAllCategories } from "../../store/categoiesSlice";
 
 const news: Array<OneNewsType> = [
   {
     id: 0,
-    image: newsImage,
+    image: firstNews,
     text: "Открытие нового кинотеатра в Минске!",
   },
   {
     id: 1,
-    image: newsImage,
+    image: secondNews,
     text: "В Минском Национальном музее проводят реставрацию музейных ценностей",
   },
   {
     id: 2,
-    image: newsImage,
+    image: thirdNews,
     text: "Сеть ресторанов Макдональдс уходит из Беларуси!",
+  },
+];
+
+const categoriesClient: Array<CategoryType> = [
+  {
+    image: "./images/categories/cinema",
+    link: "cinema",
+  },
+  {
+    image: "./images/categories/theatre",
+    link: "theatre",
+  },
+  {
+    image: "./images/categories/exhibitions",
+    link: "exhibitions",
+  },
+  {
+    image: "./images/categories/circus",
+    link: "circus",
+  },
+  {
+    image: "./images/categories/master-classes",
+    link: "master-classes",
+  },
+  {
+    image: "./images/categories/restaraunts",
+    link: "restaraunts",
+  },
+  {
+    image: "./images/categories/meets",
+    link: "meets",
+  },
+  {
+    image: "./images/categories/excursions",
+    link: "excursions",
+  },
+  {
+    image: "./images/categories/sport",
+    link: "sport",
+  },
+  {
+    image: "./images/categories/lessons",
+    link: "lessons",
+  },
+  {
+    image: "./images/categories/children",
+    link: "children",
+  },
+  {
+    image: "./images/categories/concerts",
+    link: "concerts",
+  },
+  {
+    image: "./images/categories/bars",
+    link: "bars",
+  },
+  {
+    image: "./images/categories/clubs",
+    link: "clubs",
+  },
+  {
+    image: "./images/categories/other",
+    link: "other",
   },
 ];
 
 interface MainMenuProps {
   setShowBigHeader: (flag: boolean) => void;
-  categories: CategoryType[];
 }
 
-export default function MainMenu({
-  setShowBigHeader,
-  categories,
-}: MainMenuProps) {
+export default function MainMenu({ setShowBigHeader }: MainMenuProps) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { categories } = useAppSelector((store) => store.categories);
 
   useEffect(() => {
+    fetchCategories().then((categories) =>
+      dispatch(setAllCategories(categories))
+    );
+
     setShowBigHeader(true);
 
     return () => {
@@ -61,17 +131,19 @@ export default function MainMenu({
       </Content>
       <Title>Категории</Title>
       <Categories>
-        {categories.map((category: CategoryType) => (
-          <CategoryBlock
-            onClick={() => chooseCategory(category.link)}
-            key={category.id}
-            image={category.image}
-          >
-            <Text color="#FFFFFF" size={24}>
-              {category.title}
-            </Text>
-          </CategoryBlock>
-        ))}
+        {categories.map((category: CategoryTypeFetch) => {
+          return (
+            <CategoryBlock
+              onClick={() => chooseCategory(category.categoryName)}
+              key={category.id}
+              image={require(`${
+                categoriesClient.find(
+                  (obj) => obj.link === category.categoryName
+                )?.image
+              }.png`)}
+            ></CategoryBlock>
+          );
+        })}
       </Categories>
     </>
   );

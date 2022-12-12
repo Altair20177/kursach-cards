@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { registration, logIn } from "../../http/userAPI";
+import { useAppDispatch } from "../../store/hooks";
+import { authorizeUser, setUserData } from "../../store/userSlice";
 import Text from "../generic/Text";
 
 interface ModalRegAuthProps {
@@ -7,6 +10,7 @@ interface ModalRegAuthProps {
   isRequestToAdmin: boolean;
   setIsAuth: (flag: boolean) => void;
   setIsRequestToAdmin: (flag: boolean) => void;
+  setModalIsOpen: (flag: boolean) => void;
 }
 
 export default function ModalRegAuth({
@@ -14,7 +18,52 @@ export default function ModalRegAuth({
   setIsAuth,
   isRequestToAdmin,
   setIsRequestToAdmin,
+  setModalIsOpen,
 }: ModalRegAuthProps) {
+  const [login, setLogin] = useState<string>("");
+  const [nameAndSurname, setNameAndSurname] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const dispatch = useAppDispatch();
+
+  function LogAndSignIn(userInfo: any) {
+    dispatch(authorizeUser(true));
+    dispatch(setUserData(userInfo));
+
+    setLogin("");
+    setNameAndSurname("");
+    setEmail("");
+    setPassword("");
+    setModalIsOpen(false);
+  }
+
+  async function signIn() {
+    try {
+      const userInfo = await registration(
+        email,
+        password,
+        login,
+        nameAndSurname?.split(" ")[0],
+        nameAndSurname?.split(" ")[1]
+      );
+
+      LogAndSignIn(userInfo);
+    } catch (e: any) {
+      alert(e.response.data.message);
+    }
+  }
+
+  async function logInFunc() {
+    try {
+      const userInfo = await logIn(email, password);
+
+      LogAndSignIn(userInfo);
+    } catch (e: any) {
+      alert(e.response.data.message);
+    }
+  }
+
   return (
     <Block>
       <Header>
@@ -67,30 +116,54 @@ export default function ModalRegAuth({
             {!isAuth && (
               <React.Fragment>
                 <Text pb={10} size={16} lh={20} color="#292929">
-                  Имя
+                  Имя и фамилия
                 </Text>
-                <Input />
+                <Input
+                  value={nameAndSurname}
+                  onChange={(e) => setNameAndSurname(e.target.value)}
+                />
                 <Text pt={5} color="rgba(41, 41, 41, 0.34);" size={10}>
                   Не допустимы к вводу цифры и специальные символы
                 </Text>
+                <Text pb={10} size={16} lh={20} color="#292929">
+                  Логин
+                </Text>
+                <Input
+                  value={login}
+                  onChange={(e) => setLogin(e.target.value)}
+                />
               </React.Fragment>
             )}
             <Text pt={10} pb={10} size={16} lh={20} color="#292929">
               Email
             </Text>
-            <Input type="email" />
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+            />
             <Text pt={10} pb={10} size={16} lh={20} color="#292929">
               Пароль
             </Text>
-            <Input type="password" />
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+            />
             {!isAuth && (
               <Text pt={5} color="rgba(41, 41, 41, 0.34);" size={10}>
                 Пароль должен содержать 8 символов
               </Text>
             )}
-            <ButtonWrapper isAuthOrReg={true}>
-              <SignIn>Вход</SignIn>
-            </ButtonWrapper>
+            {!isAuth ? (
+              <ButtonWrapper isAuthOrReg={true}>
+                <SignIn onClick={signIn}>Зарегистрироваться</SignIn>
+              </ButtonWrapper>
+            ) : (
+              <ButtonWrapper isAuthOrReg={true}>
+                <SignIn onClick={logInFunc}>Вход</SignIn>
+              </ButtonWrapper>
+            )}
             <TextWrapper onClick={() => setIsRequestToAdmin(true)}>
               <Text underline size={11} color="#335250">
                 Подать заявку на регистрацию учетной записи администратора
@@ -125,7 +198,7 @@ const ButtonWrapper = styled.div<{ isAuthOrReg: boolean }>`
 const SignIn = styled.button`
   background: #335250;
   border-radius: 20px;
-  width: 150px;
+  padding: 0 30px;
   height: 31.25px;
   font-size: 16px;
   color: #ffffff;

@@ -2,28 +2,31 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface UserState {
   isAuthorized: boolean;
+  userData: {
+    email: string;
+    userRole: 'admin' | 'user' | 'superAdmin';
+    id: string;
+  } | null;
 }
 
 const initialState: UserState = {
   isAuthorized: false,
+  userData: null,
 };
 
 export const userSlice = createSlice({
   name: "userSlice",
   initialState,
   reducers: {
-    /*     changeCurrentPage(state, page) {
-      state.currentPage = page.payload;
+    authorizeUser(state, action) {
+      state.isAuthorized = action.payload;
     },
-    addProducts(state, products) {
-      state.allProducts = products.payload;
+    setUserData(state, action) {
+      state.userData = action.payload;
     },
-    changeAmountProductsToShow(state, amount) {
-      state.amountProductsToShow = amount.payload;
-    }, */
   },
 });
 
-export const {} = userSlice.actions;
+export const { authorizeUser, setUserData } = userSlice.actions;
 
 export default userSlice.reducer;

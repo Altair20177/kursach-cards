@@ -1,60 +1,28 @@
 import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
-import { CardType, CategoryType } from "../../types";
+import { CardType } from "../../types";
 import Text from "../generic/Text";
 import search from "./images/search.svg";
 import arrow from "./images/arrow.svg";
 import OneCard from "./OneCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchCardsByCategory } from "../../http/cardApi";
 
-const cardsInfo: CardType[] = [
-  {
-    id: 1,
-    name: "Card 1",
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-    category: "",
-  },
-  {
-    id: 2,
-    name: "Card 2",
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-    category: "",
-  },
-  {
-    id: 3,
-    name: "Card 3",
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-    category: "",
-  },
-  {
-    id: 4,
-    name: "Card 4",
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-    category: "",
-  },
-  {
-    id: 5,
-    name: "Card 5",
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-    category: "",
-  },
-];
-
-export default function Cards({ categories }: { categories: CategoryType[] }) {
+export default function Cards({}) {
   const { category } = useParams();
 
   const [sortType, setSortType] = useState<string>("normal");
+  const [cards, setCards] = useState<CardType[]>([]);
 
   function updateSort() {
     sortType === "normal" && setSortType("up");
     sortType === "up" && setSortType("down");
     sortType === "down" && setSortType("normal");
   }
+
+  useEffect(() => {
+    category && fetchCardsByCategory(category).then((data) => setCards(data));
+  }, [category]);
 
   return (
     <Container>
@@ -79,11 +47,17 @@ export default function Cards({ categories }: { categories: CategoryType[] }) {
           <SearchIcon src={search} alt="search" />
         </SearchBlock>
       </Options>
-      <CardsContainer>
-        {cardsInfo.map((card: CardType) => {
-          return <OneCard key={card.id} cardAbout={card} />;
-        })}
-      </CardsContainer>
+      {cards.length !== 0 ? (
+        <CardsContainer>
+          {cards.map((card: CardType) => {
+            return <OneCard withHeart key={card.id} cardAbout={card} />;
+          })}
+        </CardsContainer>
+      ) : (
+        <Text pt={50} color="black" align="center" size={50}>
+          Карточек на данную категорию нет!
+        </Text>
+      )}
     </Container>
   );
 }

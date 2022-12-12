@@ -5,10 +5,15 @@ export type OneNewsType = {
 };
 
 export type CategoryType = {
-  id: number;
   image: string;
-  title: string;
   link: string;
+};
+
+export type CategoryTypeFetch = {
+  id: number;
+  categoryName: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type CardType = {
@@ -16,4 +21,13 @@ export type CardType = {
   category: string;
   name: string;
   description: string;
-}
+};
+
+export type UserType = {
+  id: number;
+  name: string;
+  surname: string;
+  userRole: string;
+  phone: string | null;
+  email: string;
+};

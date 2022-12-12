@@ -6,9 +6,10 @@ import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 
 interface OneCardProps {
   cardAbout: CardType;
+  withHeart: boolean;
 }
 
-export default function OneCard({ cardAbout }: OneCardProps) {
+export default function OneCard({ cardAbout, withHeart }: OneCardProps) {
   const isUserAuthorized = false;
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -24,9 +25,11 @@ export default function OneCard({ cardAbout }: OneCardProps) {
   return (
     <>
       <Block>
-        <HeartWrapper onClick={() => addToFavourites(cardAbout.id)}>
-          <HeartSvg width={25} height={25} />
-        </HeartWrapper>
+        {withHeart && (
+          <HeartWrapper onClick={() => addToFavourites(cardAbout.id)}>
+            <HeartSvg width={25} height={25} />
+          </HeartWrapper>
+        )}
       </Block>
       {showMessage && <Message>Необходимо авторизоваться!</Message>}
     </>

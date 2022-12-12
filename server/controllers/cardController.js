@@ -1,4 +1,4 @@
-const { Card } = require("../models/models");
+const { Card, Category } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const uuid = require("uuid");
 const path = require("path");
@@ -45,8 +45,22 @@ class CardController {
     }
   }
 
-  async getAll(req, res) {
-    const cards = await Card.findAll();
+  async getAllByCategoryId(req, res, next) {
+    const { categoryName } = req.body;
+    if(!categoryName) {
+      return next(ApiError.internal('Название категории невалидно!'));
+    }
+    const category = await Category.findOne({ where: { categoryName } });
+    if(!category) {
+      return next(ApiError.internal('Такой категории не существует!'));
+    }
+    const cards = await Card.findAll({ where: { categoryId: category.id } });
+    return res.json(cards);
+  }
+
+  async getAllByOrganizationId(req, res) {
+    const { organizationId } = req.body;
+    const cards = await Card.findAll({ where: { organizationId } });
     return res.json(cards);
   }
 }
