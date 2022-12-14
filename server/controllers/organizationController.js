@@ -48,11 +48,11 @@ class OrganizationController {
   }
 
   async getOne(req, res) {
-    const { id } = req.params;
-    const organization = await Organization.findOne({
-      where: { id },
+    const { organization } = req.params;
+    const organizationToSend = await Organization.findOne({
+      where: { webSite: `${organization}.by` },
     });
-    return res.json(organization);
+    return res.json(organizationToSend);
   }
 }
 

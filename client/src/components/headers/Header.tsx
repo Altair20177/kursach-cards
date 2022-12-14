@@ -38,6 +38,7 @@ export default function Header({ size }: HeaderProps) {
     dispatch(authorizeUser(false));
     dispatch(setUserData(null));
     localStorage.removeItem("token");
+    navigate("main");
   }
 
   return (
@@ -58,7 +59,15 @@ export default function Header({ size }: HeaderProps) {
           )}
           <RightMenu>
             {isAuthorized && userData?.userRole !== "user" && (
-              <Button onClick={() => navigate("/admin")}>Админ-панель</Button>
+              <Button
+                onClick={() =>
+                  userData?.userRole === "admin"
+                    ? navigate("/admin/published-cards")
+                    : navigate("/admin/managing-panel")
+                }
+              >
+                Админ-панель
+              </Button>
             )}
             <Button ml={60} onClick={onFavouriteClick} heartSvg={heartSvg}>
               Избранное

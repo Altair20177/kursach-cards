@@ -5,6 +5,7 @@ import { CardType } from "../../types";
 import OneCard from "../cards/OneCard";
 import ModalContainer from "../generic/ModalContainer";
 import Text from "../generic/Text";
+import ModalComment from "../modal/ModalComment";
 
 export default function AdminCards() {
   const { pathname } = useLocation();
@@ -17,6 +18,14 @@ export default function AdminCards() {
       description:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
       category: "",
+      webSite: "",
+      address: "",
+      dateTimeStart: "",
+      dateTimeFinish: "",
+      workingTime: "",
+      photo1: "",
+      photo2: "",
+      photo3: "",
     },
     {
       id: 2,
@@ -24,6 +33,14 @@ export default function AdminCards() {
       description:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
       category: "",
+      webSite: "",
+      address: "",
+      dateTimeStart: "",
+      dateTimeFinish: "",
+      workingTime: "",
+      photo1: "",
+      photo2: "",
+      photo3: "",
     },
   ];
   return (
@@ -45,7 +62,7 @@ export default function AdminCards() {
           <CardsContainer>
             {cards.map((card: CardType) => {
               return (
-                <div>
+                <div key={card.id}>
                   <OneCard withHeart={false} key={card.id} cardAbout={card} />
                   <ButtonsBlock>
                     <Button>
@@ -54,7 +71,11 @@ export default function AdminCards() {
                       </Text>
                     </Button>
                     <Button>
-                      <Text align="center" size={16}>
+                      <Text
+                        onClick={() => setModalIsOpen(true)}
+                        align="center"
+                        size={16}
+                      >
                         Отправить на доработку
                       </Text>
                     </Button>
@@ -63,11 +84,8 @@ export default function AdminCards() {
               );
             })}
           </CardsContainer>
-          <ModalContainer
-            isOpen={modalIsOpen}
-            setIsOpen={setModalIsOpen}
-          >
-            
+          <ModalContainer isOpen={modalIsOpen} setIsOpen={setModalIsOpen}>
+            <ModalComment />
           </ModalContainer>
         </>
       )}
@@ -78,6 +96,7 @@ export default function AdminCards() {
 const CardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 25%);
+  margin-bottom: 100px;
 `;
 
 const ButtonsBlock = styled.div`

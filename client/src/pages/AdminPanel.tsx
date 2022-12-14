@@ -45,11 +45,12 @@ export default function AdminPanel() {
   const { pathname } = useLocation();
 
   const navToShow =
-    userData?.userRole === "admin" ? NavForSuperAdmin : NavForAdmin;
+    userData?.userRole === "admin" ? NavForAdmin : NavForSuperAdmin;
 
   useEffect(() => {
-    userData?.userRole === "superAdmin" && navigate("managing-panel");
-    userData?.userRole === "admin" && navigate("published-cards");
+    userData?.userRole === "superAdmin"
+      ? navigate("managing-panel")
+      : navigate("published-cards");
   }, [userData?.userRole]);
 
   return (

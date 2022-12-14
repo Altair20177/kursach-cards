@@ -34,3 +34,16 @@ export const fetchCardsByOrganization = async (organizationId) => {
   });
   return data;
 };
+
+export const fetchOrganization = async (organization) => {
+  const { data } = await $host.get("api/organization/" + organization);
+  return data;
+};
+
+export const addToFavourites = async (cardId, userId) => {
+  const { data } = await $host.post("api/favourite", {
+    cardId,
+    userId,
+  });
+  return data;
+};

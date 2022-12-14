@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Text from "../generic/Text";
 
 interface TextAreaProps {
-  label: string;
+  label?: string;
   height: number;
   comment?: string;
 }

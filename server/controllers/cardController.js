@@ -47,12 +47,12 @@ class CardController {
 
   async getAllByCategoryId(req, res, next) {
     const { categoryName } = req.body;
-    if(!categoryName) {
-      return next(ApiError.internal('Название категории невалидно!'));
+    if (!categoryName) {
+      return next(ApiError.internal("Название категории невалидно!"));
     }
     const category = await Category.findOne({ where: { categoryName } });
-    if(!category) {
-      return next(ApiError.internal('Такой категории не существует!'));
+    if (!category) {
+      return next(ApiError.internal("Такой категории не существует!"));
     }
     const cards = await Card.findAll({ where: { categoryId: category.id } });
     return res.json(cards);

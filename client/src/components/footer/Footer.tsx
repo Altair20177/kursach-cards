@@ -35,7 +35,6 @@ export default function Footer() {
 
 const Block = styled.footer`
   background-color: #004945;
-  margin-top: 100px;
 `;
 
 const Content = styled.div`

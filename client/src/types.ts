@@ -21,6 +21,14 @@ export type CardType = {
   category: string;
   name: string;
   description: string;
+  webSite: string;
+  address: string;
+  dateTimeStart: string;
+  dateTimeFinish: string;
+  workingTime: string;
+  photo1: string;
+  photo2: string;
+  photo3: string;
 };
 
 export type UserType = {
@@ -30,4 +38,19 @@ export type UserType = {
   userRole: string;
   phone: string | null;
   email: string;
+};
+
+export type OrganizationType = null | {
+  id: number;
+  name: string;
+  categoryId: number;
+  description: string;
+  phone: string;
+  organizationAddress: string;
+  webSite: string;
+  photo1: string;
+  photo2: string;
+  photo3: string;
+  photo4: string;
+  photo5: string;
 };

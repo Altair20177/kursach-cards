@@ -11,6 +11,7 @@ import AdminCards from "./components/admin/AdminCards";
 import { check } from "./http/userAPI";
 import { useAppDispatch } from "./store/hooks";
 import { authorizeUser, setUserData } from "./store/userSlice";
+import Organization from "./pages/Organization";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -43,6 +44,7 @@ function App() {
           path="/main/:category"
           element={<Cards />}
         />
+        <Route path="/main/:category/:organization" element={<Organization/>}/>
         <Route path="/main/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminPanel />}>
           <Route path="managing-panel" element={<div>flgdg</div>} />

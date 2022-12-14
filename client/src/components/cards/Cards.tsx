@@ -26,7 +26,6 @@ export default function Cards({}) {
 
   return (
     <Container>
-      <Carusel></Carusel>
       <Options>
         <Sorts>
           <OptionsItem>
@@ -43,7 +42,7 @@ export default function Cards({}) {
           </OptionsItem>
         </Sorts>
         <SearchBlock>
-          <Search placeholder="Введите место или название" />
+          <Search placeholder="Введите название мероприятия" />
           <SearchIcon src={search} alt="search" />
         </SearchBlock>
       </Options>
@@ -54,7 +53,7 @@ export default function Cards({}) {
           })}
         </CardsContainer>
       ) : (
-        <Text pt={50} color="black" align="center" size={50}>
+        <Text pt={80} pb={264} color="black" align="center" size={50}>
           Карточек на данную категорию нет!
         </Text>
       )}
@@ -67,9 +66,8 @@ const Container = styled.div`
   padding: 0 20px;
   margin: 0 auto;
   margin-top: 45px;
+  margin-bottom: 100px;
 `;
-
-const Carusel = styled.div``;
 
 const CardsContainer = styled.div`
   display: grid;
