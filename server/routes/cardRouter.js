@@ -6,5 +6,7 @@ const checkRoleMiddleware = require("../middleware/checkRoleMiddleware");
 router.post("/", checkRoleMiddleware("admin"), cardController.create);
 router.post("/byCategory", cardController.getAllByCategoryId);
 router.get("/byOrganization", cardController.getAllByOrganizationId);
+router.get("/toAccept", cardController.getCardsToAccept);
+
 
 module.exports = router;

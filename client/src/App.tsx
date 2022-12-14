@@ -12,6 +12,7 @@ import { check } from "./http/userAPI";
 import { useAppDispatch } from "./store/hooks";
 import { authorizeUser, setUserData } from "./store/userSlice";
 import Organization from "./pages/Organization";
+import AdminCardsToAccept from "./components/admin/AdminCardsToAccept";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -34,22 +35,18 @@ function App() {
         <Route path="/" element={<Navigate to="/main" />} />
         <Route
           path="/main"
-          element={
-            <MainMenu
-              setShowBigHeader={setShowBigHeader}
-            />
-          }
+          element={<MainMenu setShowBigHeader={setShowBigHeader} />}
         />
+        <Route path="/main/:category" element={<Cards />} />
         <Route
-          path="/main/:category"
-          element={<Cards />}
+          path="/main/:category/:organization"
+          element={<Organization />}
         />
-        <Route path="/main/:category/:organization" element={<Organization/>}/>
         <Route path="/main/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminPanel />}>
           <Route path="managing-panel" element={<div>flgdg</div>} />
           <Route path="requests" element={<div>flgdg</div>} />
-          <Route path="cards-to-accept" element={<AdminCards />} />
+          <Route path="cards-to-accept" element={<AdminCardsToAccept />} />
           <Route path="published-cards" element={<AdminCards />} />
           <Route path="publish-new-card" element={<AdminInputs />} />
           <Route path="update-profile" element={<AdminInputs />} />

@@ -7,6 +7,7 @@ import Message from "../generic/Message";
 import ModalContainer from "../generic/ModalContainer";
 import Text from "../generic/Text";
 import ModalRegAuth from "../modal/ModalRegAuth";
+import ModalRequest from "../modal/ModalRequest";
 import back from "./images/header_back_1.png";
 import heartSvg from "./images/heart_1.svg";
 
@@ -17,7 +18,7 @@ interface HeaderProps {
 export default function Header({ size }: HeaderProps) {
   const [isAuth, setIsAuth] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [isRequestToAdmin, setIsRequestToAdmin] = useState<boolean>(false);
+  const [modalIsOpen2, setModalIsOpen2] = useState<boolean>(false);
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   const { isAuthorized, userData } = useAppSelector((store) => store.user);
@@ -38,6 +39,7 @@ export default function Header({ size }: HeaderProps) {
     dispatch(authorizeUser(false));
     dispatch(setUserData(null));
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     navigate("main");
   }
 
@@ -69,6 +71,11 @@ export default function Header({ size }: HeaderProps) {
                 Админ-панель
               </Button>
             )}
+            {isAuthorized && userData?.userRole === "user" && (
+              <Button onClick={() => setModalIsOpen2(true)}>
+                Подать заявку
+              </Button>
+            )}
             <Button ml={60} onClick={onFavouriteClick} heartSvg={heartSvg}>
               Избранное
             </Button>
@@ -94,17 +101,20 @@ export default function Header({ size }: HeaderProps) {
       </HeaderBlock>
       <ModalContainer
         setIsAuth={setIsAuth}
-        setIsRequestToAdmin={setIsRequestToAdmin}
         isOpen={modalIsOpen}
         setIsOpen={setModalIsOpen}
       >
         <ModalRegAuth
           isAuth={isAuth}
           setIsAuth={setIsAuth}
-          isRequestToAdmin={isRequestToAdmin}
-          setIsRequestToAdmin={setIsRequestToAdmin}
           setModalIsOpen={setModalIsOpen}
         />
+      </ModalContainer>
+      <ModalContainer
+        isOpen={modalIsOpen2}
+        setIsOpen={setModalIsOpen2}
+      >
+        <ModalRequest setIsOpen={setModalIsOpen2}/>
       </ModalContainer>
       {showMessage && <Message>Необходимо авторизоваться!</Message>}
     </>

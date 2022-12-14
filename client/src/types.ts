@@ -22,7 +22,7 @@ export type CardType = {
   name: string;
   description: string;
   webSite: string;
-  address: string;
+  eventAddress: string;
   dateTimeStart: string;
   dateTimeFinish: string;
   workingTime: string;
@@ -53,4 +53,6 @@ export type OrganizationType = null | {
   photo3: string;
   photo4: string;
   photo5: string;
+  userId: number;
+  workTime: string;
 };

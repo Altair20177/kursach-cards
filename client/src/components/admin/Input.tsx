@@ -4,15 +4,29 @@ import Text from "../generic/Text";
 interface InputProps {
   label: string;
   height: number;
+  value: string;
+  setValue: (e: any) => void;
+  placeholder?: string;
 }
 
-export default function Input({ label, height }: InputProps) {
+export default function Input({
+  label,
+  height,
+  value,
+  setValue,
+  placeholder,
+}: InputProps) {
   return (
     <>
       <Text color="#292929" pb={10} size={16}>
         {label}
       </Text>
-      <InputLayout height={height} />
+      <InputLayout
+        placeholder={placeholder || ""}
+        value={value}
+        onChange={setValue}
+        height={height}
+      />
     </>
   );
 }

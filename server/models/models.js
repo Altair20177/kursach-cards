@@ -29,7 +29,7 @@ const RequestToAdmin = sequelize.define("request_to_admin", {
   //userId: { type: DataTypes.INTEGER },
   organizationName: { type: DataTypes.STRING },
   //categoryId: { type: DataTypes.INTEGER },
-  email: { type: DataTypes.STRING },
+  address: { type: DataTypes.STRING },
   phone: { type: DataTypes.STRING },
 });
 
@@ -46,6 +46,7 @@ const Card = sequelize.define("card", {
   description: { type: DataTypes.STRING },
   eventAddress: { type: DataTypes.STRING },
   webSite: { type: DataTypes.STRING },
+  toAccept: { type: DataTypes.BOOLEAN },
 });
 
 const Organization = sequelize.define("organization", {
@@ -61,6 +62,7 @@ const Organization = sequelize.define("organization", {
   phone: { type: DataTypes.STRING },
   organizationAddress: { type: DataTypes.STRING },
   webSite: { type: DataTypes.STRING },
+  workTime: { type: DataTypes.STRING },
 });
 
 const Category = sequelize.define("category", {
@@ -89,8 +91,14 @@ Card.belongsTo(Organization);
 Category.hasMany(Organization);
 Organization.belongsTo(Category);
 
+User.hasOne(Organization);
+Organization.belongsTo(User);
+
 Category.hasMany(RequestToAdmin);
 RequestToAdmin.belongsTo(Category);
+
+User.hasOne(RequestToAdmin);
+RequestToAdmin.belongsTo(User);
 
 module.exports = {
   User,

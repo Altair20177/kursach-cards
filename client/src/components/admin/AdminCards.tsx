@@ -1,94 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { fetchPublishedCards } from "../../http/organizationApi";
 import { CardType } from "../../types";
 import OneCard from "../cards/OneCard";
-import ModalContainer from "../generic/ModalContainer";
-import Text from "../generic/Text";
-import ModalComment from "../modal/ModalComment";
 
 export default function AdminCards() {
   const { pathname } = useLocation();
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [organizationsCards, setOrganizationsCards] = useState<CardType[]>([]);
 
-  const cards: CardType[] = [
-    {
-      id: 1,
-      name: "Card 1",
-      description:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-      category: "",
-      webSite: "",
-      address: "",
-      dateTimeStart: "",
-      dateTimeFinish: "",
-      workingTime: "",
-      photo1: "",
-      photo2: "",
-      photo3: "",
-    },
-    {
-      id: 2,
-      name: "Card 2",
-      description:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis, magnam.",
-      category: "",
-      webSite: "",
-      address: "",
-      dateTimeStart: "",
-      dateTimeFinish: "",
-      workingTime: "",
-      photo1: "",
-      photo2: "",
-      photo3: "",
-    },
-  ];
+  useEffect(() => {
+    fetchPublishedCards(localStorage.getItem("userId")).then((data) =>
+      setOrganizationsCards(data)
+    );
+  }, []);
+
   return (
     <>
-      {pathname === "/admin/published-cards" ? (
-        <>
-          <Title>Опубликованные карточки</Title>
-          <CardsContainer>
-            {cards.map((card: CardType) => {
-              return (
-                <OneCard withHeart={false} key={card.id} cardAbout={card} />
-              );
-            })}
-          </CardsContainer>
-        </>
-      ) : (
-        <>
-          <Title>Карточки на утверждение</Title>
-          <CardsContainer>
-            {cards.map((card: CardType) => {
-              return (
-                <div key={card.id}>
-                  <OneCard withHeart={false} key={card.id} cardAbout={card} />
-                  <ButtonsBlock>
-                    <Button>
-                      <Text align="center" size={16}>
-                        Утвердить
-                      </Text>
-                    </Button>
-                    <Button>
-                      <Text
-                        onClick={() => setModalIsOpen(true)}
-                        align="center"
-                        size={16}
-                      >
-                        Отправить на доработку
-                      </Text>
-                    </Button>
-                  </ButtonsBlock>
-                </div>
-              );
-            })}
-          </CardsContainer>
-          <ModalContainer isOpen={modalIsOpen} setIsOpen={setModalIsOpen}>
-            <ModalComment />
-          </ModalContainer>
-        </>
-      )}
+      <Title>Опубликованные карточки</Title>
+      <CardsContainer>
+        {organizationsCards.length !== 0 &&
+          organizationsCards.map((card: CardType) => {
+            return <OneCard withHeart={false} key={card.id} cardAbout={card} />;
+          })}
+      </CardsContainer>
     </>
   );
 }

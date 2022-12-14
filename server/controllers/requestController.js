@@ -1,17 +1,20 @@
-const { RequestToAdmin } = require("../models/models");
+const { RequestToAdmin, Category } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
 class RequestController {
   async create(req, res, next) {
     try {
-      const { organizationName, email, phone, userId, categoryId } = req.body;
+      const { organizationName, address, phone, userId, categoryName } =
+        req.body;
+
+      const category = await Category.findOne({ where: { categoryName } });
 
       const request = await RequestToAdmin.create({
         organizationName,
-        email,
+        address,
         phone,
         userId,
-        categoryId,
+        categoryId: category.id,
       });
 
       return res.json(request);

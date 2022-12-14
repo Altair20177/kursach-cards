@@ -15,8 +15,11 @@ class CardController {
         webSite,
         categoryId,
         organizationId,
+        toAccept,
       } = req.body;
       const { photo1, photo2, photo3 } = req.files;
+
+      console.log("card", cardName);
 
       let fileName1 = uuid.v4() + ".jpg";
       let fileName2 = uuid.v4() + ".jpg";
@@ -38,6 +41,7 @@ class CardController {
         photo1: fileName1,
         photo2: fileName2,
         photo3: fileName3,
+        toAccept,
       });
       return res.json(card);
     } catch (e) {
@@ -54,13 +58,24 @@ class CardController {
     if (!category) {
       return next(ApiError.internal("Такой категории не существует!"));
     }
-    const cards = await Card.findAll({ where: { categoryId: category.id } });
+    const cards = await Card.findAll({
+      where: { categoryId: category.id, toAccept: false },
+    });
     return res.json(cards);
   }
 
   async getAllByOrganizationId(req, res) {
     const { organizationId } = req.body;
-    const cards = await Card.findAll({ where: { organizationId } });
+    const cards = await Card.findAll({
+      where: { organizationId, toAccept: false },
+    });
+    return res.json(cards);
+  }
+
+  async getCardsToAccept(req, res) {
+    const cards = await Card.findAll({
+      where: { toAccept: true },
+    });
     return res.json(cards);
   }
 }

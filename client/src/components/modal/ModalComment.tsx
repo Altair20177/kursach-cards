@@ -13,7 +13,7 @@ export default function ModalComment({}: ModalCommentProps) {
         </Text>
       </Header>
       <Body>
-        <TextArea height={251} />
+        <TextArea value="sd" setValue={(e) => e} height={251} />
         <Button>Отправить</Button>
       </Body>
     </Block>

@@ -5,15 +5,17 @@ interface TextAreaProps {
   label?: string;
   height: number;
   comment?: string;
+  value: string;
+  setValue: (e: any) => void;
 }
 
-export default function TextArea({ label, height, comment }: TextAreaProps) {
+export default function TextArea({ label, height, comment, value, setValue }: TextAreaProps) {
   return (
     <>
       <Text color="#292929" pb={10} size={16}>
         {label}
       </Text>
-      <TextAreaLayout height={height} />
+      <TextAreaLayout value={value} onChange={setValue} height={height} />
       {comment && (
         <Text mb={20} size={10} pt={8} color="rgba(41, 41, 41, 0.34)">
           {comment}

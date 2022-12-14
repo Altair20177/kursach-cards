@@ -4,7 +4,6 @@ interface ModalConteinerProps
   extends React.HTMLAttributes<HTMLParagraphElement> {
   children: React.ReactNode;
   isOpen: boolean;
-  setIsRequestToAdmin?: (flag: boolean) => void;
   setIsOpen: (flag: boolean) => void;
   setIsAuth?: (flag: boolean) => void;
 }
@@ -13,11 +12,9 @@ export default function ModalContainer({
   children,
   isOpen,
   setIsOpen,
-  setIsRequestToAdmin,
   setIsAuth,
 }: ModalConteinerProps) {
   function closeModal() {
-    setIsRequestToAdmin && setIsRequestToAdmin(false);
     setIsOpen(false);
     setIsAuth && setIsAuth(true);
   }

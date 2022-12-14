@@ -1,4 +1,4 @@
-const { Organization } = require("../models/models");
+const { Organization, Card } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const uuid = require("uuid");
 const path = require("path");
@@ -13,6 +13,7 @@ class OrganizationController {
         phone,
         organizationAddress,
         webSite,
+        workTime,
       } = req.body;
       const { photo1, photo2, photo3, photo4, photo5 } = req.files;
 
@@ -40,6 +41,7 @@ class OrganizationController {
         photo3: fileName3,
         photo4: fileName4,
         photo5: fileName5,
+        workTime,
       });
       return res.json(organization);
     } catch (e) {
@@ -53,6 +55,66 @@ class OrganizationController {
       where: { webSite: `${organization}.by` },
     });
     return res.json(organizationToSend);
+  }
+
+  async getCardsFromOrganization(req, res) {
+    const { userId } = req.params;
+    const organization = await Organization.findOne({ where: { userId } });
+
+    const cards = await Card.findAll({
+      where: { organizationId: organization.id, toAccept: false },
+    });
+
+    return res.json(cards);
+  }
+
+  async getOrganizationByAdminId(req, res) {
+    const { userId } = req.params;
+    const organization = await Organization.findOne({ where: { userId } });
+
+    return res.json(organization);
+  }
+
+  async updateOrganization(req, res) {
+    const {
+      name,
+      categoryId,
+      description,
+      phone,
+      organizationAddress,
+      webSite,
+      workTime,
+    } = req.body;
+    const { photo1, photo2, photo3, photo4, photo5 } = req.files;
+
+    let fileName1 = uuid.v4() + ".jpg";
+    let fileName2 = uuid.v4() + ".jpg";
+    let fileName3 = uuid.v4() + ".jpg";
+    let fileName4 = uuid.v4() + ".jpg";
+    let fileName5 = uuid.v4() + ".jpg";
+
+    photo1.mv(path.resolve(__dirname, "..", "static", fileName1));
+    photo2.mv(path.resolve(__dirname, "..", "static", fileName2));
+    photo3.mv(path.resolve(__dirname, "..", "static", fileName3));
+    photo4.mv(path.resolve(__dirname, "..", "static", fileName4));
+    photo5.mv(path.resolve(__dirname, "..", "static", fileName5));
+
+    const organization = await Organization.update(
+      {
+        name,
+        categoryId,
+        description,
+        phone,
+        organizationAddress,
+        webSite,
+        workTime,
+      },
+      {
+        where: { name },
+      }
+    );
+
+    return res.json(organization);
   }
 }
 
