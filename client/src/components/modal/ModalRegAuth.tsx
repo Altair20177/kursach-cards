@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { registration, logIn } from "../../http/userAPI";
 import { useAppDispatch } from "../../store/hooks";
 import { authorizeUser, setUserData } from "../../store/userSlice";
+import Message from "../generic/Message";
 import Text from "../generic/Text";
+import { nameAndSurnameInput } from "../generic/validation";
 
 interface ModalRegAuthProps {
   isAuth: boolean;
@@ -20,6 +22,8 @@ export default function ModalRegAuth({
   const [nameAndSurname, setNameAndSurname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>("");
 
   const dispatch = useAppDispatch();
 
@@ -34,19 +38,40 @@ export default function ModalRegAuth({
     setModalIsOpen(false);
   }
 
-  async function signIn() {
-    try {
-      const userInfo = await registration(
-        email,
-        password,
-        login,
-        nameAndSurname?.split(" ")[0],
-        nameAndSurname?.split(" ")[1]
-      );
+  function onChangeName(e: any) {
+    const letter = e.target.value.slice(-1);
 
-      LogAndSignIn(userInfo);
-    } catch (e: any) {
-      alert(e.response.data.message);
+    if (nameAndSurnameInput(letter)) setNameAndSurname(e.target.value);
+  }
+
+  async function signIn() {
+    if (password.length < 8) {
+      setStatus("Слишком маленький пароль!");
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } else if (login.length < 5) {
+      setStatus("Слишком маленький логин!");
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } else if (nameAndSurname.split(" ").length !== 2) {
+      setStatus("Неверный формат записи имени и фамилии!");
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    }
+    {
+      try {
+        const userInfo = await registration(
+          email,
+          password,
+          login,
+          nameAndSurname?.split(" ")[0],
+          nameAndSurname?.split(" ")[1]
+        );
+
+        LogAndSignIn(userInfo);
+      } catch (e: any) {
+        alert(e.response.data.message);
+      }
     }
   }
 
@@ -80,10 +105,7 @@ export default function ModalRegAuth({
             <Text pb={10} size={16} lh={20} color="#292929">
               Имя и фамилия
             </Text>
-            <Input
-              value={nameAndSurname}
-              onChange={(e) => setNameAndSurname(e.target.value)}
-            />
+            <Input value={nameAndSurname} onChange={(e) => onChangeName(e)} />
             <Text pt={5} color="rgba(41, 41, 41, 0.34);" size={10}>
               Не допустимы к вводу цифры и специальные символы
             </Text>
@@ -91,6 +113,9 @@ export default function ModalRegAuth({
               Логин
             </Text>
             <Input value={login} onChange={(e) => setLogin(e.target.value)} />
+            <Text pt={5} color="rgba(41, 41, 41, 0.34);" size={10}>
+              Логин должен содержать не менее 5 символов
+            </Text>
           </React.Fragment>
         )}
         <Text pt={10} pb={10} size={16} lh={20} color="#292929">
@@ -111,7 +136,7 @@ export default function ModalRegAuth({
         />
         {!isAuth && (
           <Text pt={5} color="rgba(41, 41, 41, 0.34);" size={10}>
-            Пароль должен содержать 8 символов
+            Пароль должен содержать не менее 8 символов
           </Text>
         )}
         {!isAuth ? (
@@ -124,6 +149,7 @@ export default function ModalRegAuth({
           </ButtonWrapper>
         )}
       </Body>
+      {showMessage && <Message>{status}</Message>}
     </Block>
   );
 }

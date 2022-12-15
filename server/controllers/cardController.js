@@ -78,6 +78,29 @@ class CardController {
     });
     return res.json(cards);
   }
+
+  async acceptCard(req, res) {
+    const { cardId } = req.params;
+
+    const card = await Card.update(
+      {
+        toAccept: false,
+      },
+      {
+        where: { id: cardId },
+      }
+    );
+    return res.json(card);
+  }
+
+  async rejectCard(req, res) {
+    const { cardId } = req.params;
+
+    const cardToDelete = await Card.destroy({
+      where: { id: cardId },
+    });
+    return res.json(cardToDelete);
+  }
 }
 
 module.exports = new CardController();

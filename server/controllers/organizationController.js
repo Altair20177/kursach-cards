@@ -62,7 +62,7 @@ class OrganizationController {
     const organization = await Organization.findOne({ where: { userId } });
 
     const cards = await Card.findAll({
-      where: { organizationId: organization.id, toAccept: false },
+      where: { organizationId: organization?.id, toAccept: false },
     });
 
     return res.json(cards);

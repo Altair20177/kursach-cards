@@ -1,5 +1,5 @@
 const ApiError = require("../error/ApiError");
-const { User, UserLogin } = require("../models/models");
+const { User, UserLogin, Organization, Category } = require("../models/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -71,6 +71,28 @@ class UserController {
     console.log("role", req.user.userRole);
     const token = generateJwt(req.user.id, req.user.email, req.user.userRole);
     return res.json({ token });
+  }
+
+  async getAdmins(req, res, next) {
+    const users = await User.findAll({ where: { userRole: "admin" } });
+
+    /*     const organization = Organization.findOne({
+      where: { id: user.organizationId },
+    });
+
+    const category = await Category.findOne({
+      where: { id: organization.categoryId },
+    });
+
+    const newObj = {
+      email: user.email,
+      name: user.name,
+      surname: user.surname,
+      organization: organization.name,
+      category: category.categoryName,
+    }; */
+
+    return res.json(users);
   }
 }
 

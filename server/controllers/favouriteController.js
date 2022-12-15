@@ -30,8 +30,6 @@ class FavouriteController {
 
   async deleteCardFromFavourites(req, res) {
     const { userId, cardId } = req.params;
-    console.log('user', userId);
-    console.log('card', cardId);
     const card = await Favourite.destroy({ where: { cardId, userId } });
 
     return res.json(card);

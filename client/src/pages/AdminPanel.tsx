@@ -48,9 +48,8 @@ export default function AdminPanel() {
     userData?.userRole === "admin" ? NavForAdmin : NavForSuperAdmin;
 
   useEffect(() => {
-    userData?.userRole === "superAdmin"
-      ? navigate("managing-panel")
-      : navigate("published-cards");
+    if (userData?.userRole === "superAdmin") navigate("managing-panel");
+    else if (userData?.userRole === "admin") navigate("published-cards");
   }, [userData?.userRole]);
 
   return (

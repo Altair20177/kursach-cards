@@ -30,3 +30,23 @@ export const check = async () => {
   localStorage.setItem("token", data.token);
   return jwt_decode(data.token);
 };
+
+export const fetchAdmins = async () => {
+  const { data } = await $authHost.get("api/user/admins");
+  return data;
+};
+
+export const fetchRequestToAdmin = async () => {
+  const { data } = await $authHost.get("api/request");
+  return data;
+};
+
+export const acceptRequestToAdmin = async (id) => {
+  const { data } = await $authHost.get("api/request/accept/" + id);
+  return data;
+};
+
+export const rejectRequestToAdmin = async (id) => {
+  const { data } = await $authHost.get("api/request/reject/" + id);
+  return data;
+};

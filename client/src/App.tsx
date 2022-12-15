@@ -13,6 +13,8 @@ import { useAppDispatch } from "./store/hooks";
 import { authorizeUser, setUserData } from "./store/userSlice";
 import Organization from "./pages/Organization";
 import AdminCardsToAccept from "./components/admin/AdminCardsToAccept";
+import AdminMainPanel from "./components/admin/AdminMainPanel";
+import AdminRequestPanel from "./components/admin/AdminRequestPanel";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -44,8 +46,8 @@ function App() {
         />
         <Route path="/main/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminPanel />}>
-          <Route path="managing-panel" element={<div>flgdg</div>} />
-          <Route path="requests" element={<div>flgdg</div>} />
+          <Route path="managing-panel" element={<AdminMainPanel />} />
+          <Route path="requests" element={<AdminRequestPanel />} />
           <Route path="cards-to-accept" element={<AdminCardsToAccept />} />
           <Route path="published-cards" element={<AdminCards />} />
           <Route path="publish-new-card" element={<AdminInputs />} />

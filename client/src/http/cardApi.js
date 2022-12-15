@@ -44,3 +44,13 @@ export const fetchCardsToAccept = async () => {
   const { data } = await $host.get("api/card/toAccept");
   return data;
 };
+
+export const fetchAcceptCard = async (cardId) => {
+  const { data } = await $host.get("api/card/acceptCard/" + cardId);
+  return data;
+};
+
+export const fetchRejectCard = async (cardId) => {
+  const { data } = await $host.get("api/card/rejectCard/" + cardId);
+  return data;
+};

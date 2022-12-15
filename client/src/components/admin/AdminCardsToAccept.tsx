@@ -1,54 +1,74 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchCardsToAccept } from "../../http/cardApi";
+import {
+  fetchAcceptCard,
+  fetchCardsToAccept,
+  fetchRejectCard,
+} from "../../http/cardApi";
 import { CardType } from "../../types";
 import OneCard from "../cards/OneCard";
+import Message from "../generic/Message";
 import Text from "../generic/Text";
 
 export default function AdminCardsToAccept() {
   const [cardsToAccept, setCardsToAccept] = useState<CardType[]>([]);
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>("");
 
   useEffect(() => {
     fetchCardsToAccept().then((data) => setCardsToAccept(data));
   }, []);
 
-  function acceptCard(cardId: number) {}
+  function acceptCard(cardId: number) {
+    fetchAcceptCard(cardId);
+    setCardsToAccept(cardsToAccept.filter((card) => card.id !== cardId));
+    setStatus(" утверждена");
 
-  function rejectCard(cardId: number) {}
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
+  }
+
+  function rejectCard(cardId: number) {
+    fetchRejectCard(cardId);
+    setCardsToAccept(cardsToAccept.filter((card) => card.id !== cardId));
+    setStatus(" отклонена");
+
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
+  }
 
   return (
     <>
       <Title>Карточки на утверждение</Title>
-      <CardsContainer>
-        {cardsToAccept.length !== 0 &&
-          cardsToAccept.map((card: CardType) => {
-            return (
+      {cardsToAccept.length !== 0 ? (
+        cardsToAccept.map((card: CardType) => {
+          return (
+            <CardsContainer>
               <div key={card.id}>
                 <OneCard withHeart={false} key={card.id} cardAbout={card} />
                 <ButtonsBlock>
-                  <Button>
-                    <Text
-                      onClick={() => acceptCard(card.id)}
-                      align="center"
-                      size={16}
-                    >
+                  <Button onClick={() => acceptCard(card.id)}>
+                    <Text align="center" size={16}>
                       Утвердить
                     </Text>
                   </Button>
-                  <Button>
-                    <Text
-                      onClick={() => rejectCard(card.id)}
-                      align="center"
-                      size={16}
-                    >
+                  <Button onClick={() => rejectCard(card.id)}>
+                    <Text align="center" size={16}>
                       Отклонить
                     </Text>
                   </Button>
                 </ButtonsBlock>
               </div>
-            );
-          })}
-      </CardsContainer>
+            </CardsContainer>
+          );
+        })
+      ) : (
+        <Text color="black" align="center" size={50} mt={100} mb={300}>
+          Карточек на утверждение нет!
+        </Text>
+      )}
+
+      {showMessage && <Message>карточка{status}</Message>}
     </>
   );
 }

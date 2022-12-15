@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { CardType } from "../../types";
 import Text from "../generic/Text";
-import search from "./images/search.svg";
+import searchIcon from "./images/search.svg";
 import arrow from "./images/arrow.svg";
 import OneCard from "./OneCard";
 import { useEffect, useState } from "react";
@@ -13,11 +13,23 @@ export default function Cards({}) {
 
   const [sortType, setSortType] = useState<string>("normal");
   const [cards, setCards] = useState<CardType[]>([]);
+  const [search, setSearch] = useState<string>("");
 
   function updateSort() {
     sortType === "normal" && setSortType("up");
     sortType === "up" && setSortType("down");
     sortType === "down" && setSortType("normal");
+  }
+
+  function onChangeSearch(e: any) {
+    const value = e.target.value;
+    setSearch(value);
+
+    const result = cards.filter((card: CardType) => {
+      card.name.toLowerCase().includes(value.toLowerCase());
+    });
+
+    setCards(value !== "" ? result : cards);
   }
 
   useEffect(() => {
@@ -42,8 +54,12 @@ export default function Cards({}) {
           </OptionsItem>
         </Sorts>
         <SearchBlock>
-          <Search placeholder="Введите название мероприятия" />
-          <SearchIcon src={search} alt="search" />
+          <Search
+            value={search}
+            onChange={(e) => onChangeSearch(e)}
+            placeholder="Введите название мероприятия"
+          />
+          <SearchIcon src={searchIcon} alt="search" />
         </SearchBlock>
       </Options>
       {cards.length !== 0 ? (
