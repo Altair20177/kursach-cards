@@ -19,7 +19,7 @@ export type CategoryTypeFetch = {
 export type CardType = {
   id: number;
   category: string;
-  name: string;
+  cardName: string;
   description: string;
   webSite: string;
   eventAddress: string;

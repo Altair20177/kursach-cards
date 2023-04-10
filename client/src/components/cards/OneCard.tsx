@@ -56,7 +56,7 @@ export default function OneCard({
           <Image src={cardAbout.photo1} />
           <Description>
             <Text pb={10} color="rgba(0, 0, 0, 0.53)" size={16} lh={20}>
-              {cardAbout.description}
+              {cardAbout.cardName}
             </Text>
             <Address>
               <Text

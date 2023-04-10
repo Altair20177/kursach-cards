@@ -7,33 +7,55 @@ import arrow from "./images/arrow.svg";
 import OneCard from "./OneCard";
 import { useEffect, useState } from "react";
 import { fetchCardsByCategory } from "../../http/cardApi";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../store/hooks";
+import { setAllCards } from "../../store/cardsSlice";
 
 export default function Cards({}) {
   const { category } = useParams();
+  const dispatch = useDispatch();
+  const cardsFromStore = useAppSelector((store) => store.cards);
 
   const [sortType, setSortType] = useState<string>("normal");
   const [cards, setCards] = useState<CardType[]>([]);
   const [search, setSearch] = useState<string>("");
 
   function updateSort() {
-    sortType === "normal" && setSortType("up");
-    sortType === "up" && setSortType("down");
-    sortType === "down" && setSortType("normal");
+    if (sortType === "normal") {
+      setCards(cardsFromStore.allCards);
+      setSortType("up");
+    }
+    if (sortType === "up") {
+      setCards(
+        cards.sort((a, b) => (a.dateTimeStart > b.dateTimeStart ? 1 : -1))
+      );
+      setSortType("down");
+    }
+    if (sortType === "down") {
+      setCards(
+        cards.sort((a, b) => (a.dateTimeStart > b.dateTimeStart ? 1 : -1))
+      );
+      setSortType("normal");
+    }
   }
 
   function onChangeSearch(e: any) {
     const value = e.target.value;
     setSearch(value);
 
-    const result = cards.filter((card: CardType) => {
-      card.name.toLowerCase().includes(value.toLowerCase());
-    });
+    const result = cards.filter((card: CardType) =>
+      card.cardName.toLowerCase().includes(value.toLowerCase())
+    );
 
-    setCards(value !== "" ? result : cards);
+    setCards(value === "" ? cardsFromStore.allCards : result);
   }
 
   useEffect(() => {
-    category && fetchCardsByCategory(category).then((data) => setCards(data));
+    category &&
+      fetchCardsByCategory(category).then((data) => {
+        setCards(data);
+        dispatch(setAllCards(data));
+      });
   }, [category]);
 
   return (
@@ -46,12 +68,12 @@ export default function Cards({}) {
               Свободный вход
             </Text>
           </OptionsItem>
-          <OptionsItem onClick={updateSort} sort>
+{/*           <OptionsItem onClick={updateSort} sort>
             <Text pr={5} size={15} lh={18} color="rgba(31, 31, 31, 0.79)">
               Отсортировать по дате
             </Text>
             {sortType !== "normal" && <img src={arrow} alt="arrow" />}
-          </OptionsItem>
+          </OptionsItem> */}
         </Sorts>
         <SearchBlock>
           <Search
@@ -82,7 +104,7 @@ const Container = styled.div`
   padding: 0 20px;
   margin: 0 auto;
   margin-top: 45px;
-  margin-bottom: 100px;
+  margin-bottom: 110px;
 `;
 
 const CardsContainer = styled.div`

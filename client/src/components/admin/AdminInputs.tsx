@@ -6,12 +6,12 @@ import TextArea from "./TextArea";
 import { ReactComponent as Plus } from "./images/plus.svg";
 import { useEffect, useState } from "react";
 import Message from "../generic/Message";
-import { createCard } from "../../http/cardApi";
 import { OrganizationType } from "../../types";
 import {
   fetchOrganizationByAdmin,
   updateOrganization,
 } from "../../http/organizationApi";
+import { createCard } from "../../http/cardApi";
 
 export default function AdminInputs() {
   const { pathname } = useLocation();
@@ -92,22 +92,20 @@ export default function AdminInputs() {
   function sendCard() {
     const formData = new FormData();
 
-    if (condition1()) {
-      formData.append("cardName", eventName);
-      formData.append("dateTimeStart", startDate);
-      formData.append("dateTimeFinish", endDate);
-      formData.append("photo1", cardImages[0]);
-      formData.append("photo2", cardImages[1]);
-      formData.append("photo3", cardImages[2]);
-      formData.append("description", eventDescription);
-      formData.append("eventAddress", eventAddress);
-      formData.append("webSite", organizationData?.webSite || "");
-      formData.append("categoryId", String(organizationData?.categoryId));
-      formData.append("organizationId", String(organizationData?.id));
-      formData.append("toAccept", "true");
+    formData.append("cardName", eventName);
+    formData.append("dateTimeStart", startDate);
+    formData.append("dateTimeFinish", endDate);
+    formData.append("photo1", cardImages[0]);
+    formData.append("photo2", cardImages[1]);
+    formData.append("photo3", cardImages[2]);
+    formData.append("description", eventDescription);
+    formData.append("eventAddress", eventAddress);
+    formData.append("webSite", organizationData?.webSite || "");
+    formData.append("categoryId", String(organizationData?.categoryId));
+    formData.append("organizationId", String(organizationData?.id));
+    formData.append("toAccept", "true");
 
-      createCard(formData);
-    }
+    createCard(formData);
 
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);

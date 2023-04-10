@@ -2,6 +2,7 @@ import { $authHost, $host } from "./index";
 
 export const createCard = async (card) => {
   const { data } = await $authHost.post("api/card", card);
+  console.log("aboba");
   return data;
 };
 
