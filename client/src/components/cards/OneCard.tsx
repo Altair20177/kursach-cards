@@ -12,6 +12,7 @@ import Text from "../generic/Text";
 import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
 
+
 interface OneCardProps {
   cardAbout: CardType;
   withHeart?: boolean;

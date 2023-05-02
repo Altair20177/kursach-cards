@@ -65,34 +65,32 @@ class UserController {
   }
 
   async check(req, res, next) {
-    console.log(req.user);
-    console.log("id", req.user.id);
-    console.log("email", req.user.email);
-    console.log("role", req.user.userRole);
     const token = generateJwt(req.user.id, req.user.email, req.user.userRole);
     return res.json({ token });
   }
 
   async getAdmins(req, res, next) {
     const users = await User.findAll({ where: { userRole: "admin" } });
-
-    /*     const organization = Organization.findOne({
-      where: { id: user.organizationId },
-    });
-
-    const category = await Category.findOne({
-      where: { id: organization.categoryId },
-    });
-
-    const newObj = {
-      email: user.email,
-      name: user.name,
-      surname: user.surname,
-      organization: organization.name,
-      category: category.categoryName,
-    }; */
-
     return res.json(users);
+  }
+
+  async deleteUser(req, res, next) {
+    try {
+      const { id } = req.params;
+      await UserLogin.destroy({
+        where: {
+          userId: id,
+        },
+      });
+      await User.destroy({
+        where: {
+          id,
+        },
+      });
+      res.json(id);
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
   }
 }
 

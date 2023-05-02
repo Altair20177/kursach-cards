@@ -27,9 +27,9 @@ export const fetchOrganizationByAdmin = async (userId) => {
   return data;
 };
 
-export const updateOrganization = async (organization) => {
+export const updateOrganization = async (id, organization) => {
   const { data } = await $authHost.post(
-    "api/organization/update",
+    `api/organization/update/${id}`,
     organization
   );
   return data;

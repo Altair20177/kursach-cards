@@ -12,6 +12,13 @@ import {
   updateOrganization,
 } from "../../http/organizationApi";
 import { createCard } from "../../http/cardApi";
+import { DatePicker, Button as AntdButton, Space, Upload } from "antd";
+import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
+import { UploadOutlined } from "@ant-design/icons";
+import { RcFile } from "antd/es/upload";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
 
 export default function AdminInputs() {
   const { pathname } = useLocation();
@@ -25,13 +32,14 @@ export default function AdminInputs() {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string>("");
-  const [cardImages, setCardImages] = useState<File[]>([]);
+  const [cardImages, setCardImages] = useState<RcFile[]>([]);
 
   const [organizationName, setOrganizationName] = useState<string>("");
   const [organizationDescription, setOrganizationDescription] =
     useState<string>("");
   const [organizationAddress, setOrganizationAddress] = useState<string>("");
   const [workTime, setWorkTime] = useState<string>("");
+  const [workTimeEnd, setWorkTimeEnd] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
   const [organizationImages, setOrganizationImages] = useState<File[]>([]);
 
@@ -47,6 +55,7 @@ export default function AdminInputs() {
       setWebsite(organizationData?.webSite || "");
       setOrganizationAddress(organizationData?.organizationAddress || "");
       setWorkTime(organizationData?.workTime || "");
+      setWorkTimeEnd(organizationData?.workTimeEnd || "");
       setOrganizationDescription(organizationData?.description || "");
       setOrganizationName(organizationData?.name || "");
     }
@@ -91,7 +100,7 @@ export default function AdminInputs() {
 
   function sendCard() {
     const formData = new FormData();
-
+    console.log(cardImages);
     formData.append("cardName", eventName);
     formData.append("dateTimeStart", startDate);
     formData.append("dateTimeFinish", endDate);
@@ -114,26 +123,38 @@ export default function AdminInputs() {
   function updateOrganizationFunc() {
     const formData = new FormData();
 
-    if (condition2()) {
-      formData.append("name", organizationName);
-      formData.append("description", organizationDescription);
+    // if (condition2()) {
+    formData.append("name", organizationName);
+    formData.append("description", organizationDescription);
+    organizationImages.forEach((image, idx) => {
+      formData.append(`photo${idx + 1}`, image);
+    });
+    formData.append("organizationAddress", organizationAddress);
+    formData.append("webSite", website);
+    formData.append("workTime", workTime);
+    formData.append("workTimeEnd", workTimeEnd);
 
-      formData.append("photo1", organizationImages[0]);
-      formData.append("photo2", organizationImages[1]);
-      formData.append("photo3", organizationImages[2]);
-      formData.append("photo4", organizationImages[3]);
-      formData.append("photo5", organizationImages[4]);
-      formData.append("organizationAddress", organizationAddress);
-      formData.append("webSite", website);
-      formData.append("workTime", workTime);
-
-      updateOrganization(formData);
-    }
-
-    setShowMessage2(true);
-    setTimeout(() => setShowMessage2(false), 3000);
+    updateOrganization(organizationData?.id, formData).then(() => {
+      setShowMessage2(true);
+      setTimeout(() => setShowMessage2(false), 3000);
+    });
   }
 
+  const changeEventDate = (
+    value: DatePickerProps["value"] | RangePickerProps["value"],
+    dateString: [string, string] | string
+  ) => {
+    setStartDate(dateString[0]);
+    setEndDate(dateString[1]);
+  };
+
+  const changeWorktimeDate = (
+    value: DatePickerProps["value"] | RangePickerProps["value"],
+    dateString: [string, string] | string
+  ) => {
+    setWorkTime(dateString[0]);
+    setWorkTimeEnd(dateString[1]);
+  };
   return (
     <Container>
       <Rows>
@@ -154,7 +175,35 @@ export default function AdminInputs() {
                   height={89}
                   label="Описание"
                 />
-                <Input
+                <Space
+                  direction="vertical"
+                  size={12}
+                  style={{
+                    marginBottom: 16,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      flexDirection: "row",
+                      columnGap: 10,
+                    }}
+                  >
+                    <span>Время начала мероприятия</span>
+                    <span>Время окончания мероприятия</span>
+                  </div>
+                  <RangePicker
+                    value={[
+                      !!startDate ? dayjs(startDate, "YYYY-MM-DD HH:mm") : null,
+                      !!endDate ? dayjs(endDate, "YYYY-MM-DD HH:mm") : null,
+                    ]}
+                    showTime={{ format: "HH:mm" }}
+                    format="YYYY-MM-DD HH:mm"
+                    onChange={changeEventDate}
+                  />
+                </Space>
+                {/* <Input
                   value={startDate}
                   setValue={(e) => setStartDate(e.target.value)}
                   height={40}
@@ -167,7 +216,7 @@ export default function AdminInputs() {
                   height={40}
                   label="Время окончания мероприятия"
                   placeholder="гггг-мм-дд"
-                />
+                /> */}
                 <Input
                   value={eventAddress}
                   setValue={(e) => setEventAddress(e.target.value)}
@@ -199,13 +248,39 @@ export default function AdminInputs() {
                   height={35}
                   label="Адрес организации"
                 />
-                <Input
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    flexDirection: "row",
+                    columnGap: 10,
+                    margin: "10px 0",
+                  }}
+                >
+                  <span>Время начала работы</span>
+                  <span>Время окончания работы</span>
+                </div>
+                <RangePicker
+                  value={[
+                    !!workTime ? dayjs(workTime, "YYYY-MM-DD HH:mm") : null,
+                    !!workTimeEnd
+                      ? dayjs(workTimeEnd, "YYYY-MM-DD HH:mm")
+                      : null,
+                  ]}
+                  showTime={{ format: "HH:mm" }}
+                  format="YYYY-MM-DD HH:mm"
+                  onChange={changeWorktimeDate}
+                  style={{
+                    marginBottom: 20,
+                  }}
+                />
+                {/* <Input
                   value={workTime}
                   setValue={(e) => setWorkTime(e.target.value)}
                   height={35}
                   label="Время работы"
                   placeholder="пн-пт 8:00-22:00"
-                />
+                /> */}
                 <Input
                   value={website}
                   setValue={(e) => setWebsite(e.target.value)}
@@ -215,7 +290,7 @@ export default function AdminInputs() {
                 <Button onClick={updateOrganizationFunc}>
                   <Text size={16}>Сохранить</Text>
                 </Button>
-                {showMessage2 && <Message>Данные обновлены!</Message>}
+                {/* {showMessage2 && <Message>Данные обновлены!</Message>} */}
               </>
             )}
           </Row>
@@ -225,7 +300,22 @@ export default function AdminInputs() {
         {pathname === "/admin/update-profile" ? (
           <form>
             <AddImage>
-              <UploadFile
+              <Upload
+                listType="picture"
+                maxCount={5}
+                beforeUpload={() => false}
+                onChange={(e) => {
+                  setOrganizationImages(
+                    e.fileList.map((file) => file.originFileObj) as RcFile[]
+                  );
+                }}
+                multiple
+              >
+                <AntdButton icon={<UploadOutlined />}>
+                  Загрузить картинку (максимум 5)
+                </AntdButton>
+              </Upload>
+              {/* <UploadFile
                 onChange={(e) => checkFile1(e)}
                 type="file"
                 id="file-input-1"
@@ -234,33 +324,42 @@ export default function AdminInputs() {
               <Label isImagesLoaded1={isImagesLoaded2} htmlFor="file-input-1">
                 Добавить изображение
               </Label>
-              <Plus width={15} height={15} />
+              <Plus width={15} height={15} /> */}
             </AddImage>
-            <Text pt={10} size={10} color="rgba(41, 41, 41, 0.34)">
+            {/* <Text pt={10} size={10} color="rgba(41, 41, 41, 0.34)">
               {isImagesLoaded2
                 ? "Изображения добавлены"
                 : "Добавьте минимум одно изображение"}
-            </Text>
+            </Text> */}
           </form>
         ) : (
           <form>
             <AddImage>
-              <UploadFile
-                onChange={(e) => checkFile2(e)}
-                type="file"
-                id="file-input-2"
+              <Upload
+                listType="picture"
+                maxCount={3}
+                beforeUpload={() => false}
+                onChange={(e) => {
+                  setCardImages(
+                    e.fileList.map((file) => file.originFileObj) as RcFile[]
+                  );
+                }}
                 multiple
-              />
-              <Label isImagesLoaded1={isImagesLoaded1} htmlFor="file-input-2">
+              >
+                <AntdButton icon={<UploadOutlined />}>
+                  Загрузить 3 картинки
+                </AntdButton>
+              </Upload>
+              {/* <Label isImagesLoaded1={isImagesLoaded1} htmlFor="file-input-2">
                 Добавить изображение
               </Label>
-              <Plus width={15} height={15} />
+              <Plus width={15} height={15} /> */}
             </AddImage>
-            <Text pt={10} size={10} color="rgba(41, 41, 41, 0.34)">
+            {/* <Text pt={10} size={10} color="rgba(41, 41, 41, 0.34)">
               {isImagesLoaded1
                 ? "Изображения добавлены"
                 : "Добавьте минимум одно изображение"}
-            </Text>
+            </Text> */}
           </form>
         )}
       </Rows>
@@ -277,6 +376,7 @@ export default function AdminInputs() {
 
 const Container = styled.div`
   max-width: 1350px;
+  height: 100%;
   padding: 0 20px;
   margin: 0 auto;
   margin-top: 45px;

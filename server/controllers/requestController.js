@@ -11,7 +11,6 @@ class RequestController {
     try {
       const { organizationName, address, phone, userId, categoryName } =
         req.body;
-
       const category = await Category.findOne({ where: { categoryName } });
 
       const request = await RequestToAdmin.create({

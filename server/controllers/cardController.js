@@ -18,9 +18,7 @@ class CardController {
         toAccept,
       } = req.body;
       const { photo1, photo2, photo3 } = req.files;
-
-      console.log("card", cardName);
-
+      console.log("files", req.files);
       let fileName1 = uuid.v4() + ".jpg";
       let fileName2 = uuid.v4() + ".jpg";
       let fileName3 = uuid.v4() + ".jpg";
@@ -50,11 +48,13 @@ class CardController {
   }
 
   async getAllByCategoryId(req, res, next) {
-    const { categoryName } = req.body;
-    if (!categoryName) {
+    const { categoryId } = req.params;
+    if (!categoryId) {
       return next(ApiError.internal("Название категории невалидно!"));
     }
-    const category = await Category.findOne({ where: { categoryName } });
+    const category = await Category.findOne({
+      where: { id: categoryId },
+    });
     if (!category) {
       return next(ApiError.internal("Такой категории не существует!"));
     }
@@ -65,9 +65,9 @@ class CardController {
   }
 
   async getAllByOrganizationId(req, res) {
-    const { organizationId } = req.body;
+    const { id } = req.params;
     const cards = await Card.findAll({
-      where: { organizationId, toAccept: false },
+      where: { organizationId: id, toAccept: false },
     });
     return res.json(cards);
   }

@@ -23,11 +23,11 @@ class OrganizationController {
       let fileName4 = uuid.v4() + ".jpg";
       let fileName5 = uuid.v4() + ".jpg";
 
-      photo1.mv(path.resolve(__dirname, "..", "static", fileName1));
-      photo2.mv(path.resolve(__dirname, "..", "static", fileName2));
-      photo3.mv(path.resolve(__dirname, "..", "static", fileName3));
-      photo4.mv(path.resolve(__dirname, "..", "static", fileName4));
-      photo5.mv(path.resolve(__dirname, "..", "static", fileName5));
+      photo1?.mv(path.resolve(__dirname, "..", "static", fileName1));
+      photo2?.mv(path.resolve(__dirname, "..", "static", fileName2));
+      photo3?.mv(path.resolve(__dirname, "..", "static", fileName3));
+      photo4?.mv(path.resolve(__dirname, "..", "static", fileName4));
+      photo5?.mv(path.resolve(__dirname, "..", "static", fileName5));
 
       const organization = await Organization.create({
         name,
@@ -43,10 +43,16 @@ class OrganizationController {
         photo5: fileName5,
         workTime,
       });
+      await organization.save();
       return res.json(organization);
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
+  }
+
+  async getAll(_, res) {
+    const organizations = await Organization.findAll();
+    return res.json(organizations);
   }
 
   async getOne(req, res) {
@@ -76,6 +82,7 @@ class OrganizationController {
   }
 
   async updateOrganization(req, res) {
+    const { id } = req.params;
     const {
       name,
       categoryId,
@@ -84,7 +91,26 @@ class OrganizationController {
       organizationAddress,
       webSite,
       workTime,
+      workTimeEnd,
     } = req.body;
+    if (!req.files) {
+      await Organization.update(
+        {
+          name,
+          categoryId,
+          description,
+          phone,
+          organizationAddress,
+          webSite,
+          workTime,
+          workTimeEnd,
+        },
+        {
+          where: { id },
+        }
+      );
+      return res.json(id);
+    }
     const { photo1, photo2, photo3, photo4, photo5 } = req.files;
 
     let fileName1 = uuid.v4() + ".jpg";
@@ -93,11 +119,11 @@ class OrganizationController {
     let fileName4 = uuid.v4() + ".jpg";
     let fileName5 = uuid.v4() + ".jpg";
 
-    photo1.mv(path.resolve(__dirname, "..", "static", fileName1));
-    photo2.mv(path.resolve(__dirname, "..", "static", fileName2));
-    photo3.mv(path.resolve(__dirname, "..", "static", fileName3));
-    photo4.mv(path.resolve(__dirname, "..", "static", fileName4));
-    photo5.mv(path.resolve(__dirname, "..", "static", fileName5));
+    photo1?.mv(path.resolve(__dirname, "..", "static", fileName1));
+    photo2?.mv(path.resolve(__dirname, "..", "static", fileName2));
+    photo3?.mv(path.resolve(__dirname, "..", "static", fileName3));
+    photo4?.mv(path.resolve(__dirname, "..", "static", fileName4));
+    photo5?.mv(path.resolve(__dirname, "..", "static", fileName5));
 
     const organization = await Organization.update(
       {
@@ -108,9 +134,15 @@ class OrganizationController {
         organizationAddress,
         webSite,
         workTime,
+        workTimeEnd,
+        photo1: fileName1,
+        photo2: fileName2,
+        photo3: fileName3,
+        photo4: fileName4,
+        photo5: fileName5,
       },
       {
-        where: { name },
+        where: { id },
       }
     );
 

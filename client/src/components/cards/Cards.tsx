@@ -1,19 +1,12 @@
-import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { CardType } from "../../types";
 import Text from "../generic/Text";
 import searchIcon from "./images/search.svg";
-import arrow from "./images/arrow.svg";
-import OneCard from "./OneCard";
-import { useEffect, useState } from "react";
-import { fetchCardsByCategory } from "../../http/cardApi";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { useAppSelector } from "../../store/hooks";
-import { setAllCards } from "../../store/cardsSlice";
+import CardList from "./CardList";
 
-export default function Cards({}) {
-  const { category } = useParams();
-  const dispatch = useDispatch();
+export default function Cards() {
   const cardsFromStore = useAppSelector((store) => store.cards);
 
   const [sortType, setSortType] = useState<string>("normal");
@@ -50,13 +43,13 @@ export default function Cards({}) {
     setCards(value === "" ? cardsFromStore.allCards : result);
   }
 
-  useEffect(() => {
-    category &&
-      fetchCardsByCategory(category).then((data) => {
-        setCards(data);
-        dispatch(setAllCards(data));
-      });
-  }, [category]);
+  // useEffect(() => {
+  //   category &&
+  //     fetchCardsByCategory(category).then((data) => {
+  //       setCards(data);
+  //       dispatch(setAllCards(data));
+  //     });
+  // }, [category]);
 
   return (
     <Container>
@@ -68,7 +61,7 @@ export default function Cards({}) {
               Свободный вход
             </Text>
           </OptionsItem>
-{/*           <OptionsItem onClick={updateSort} sort>
+          {/*           <OptionsItem onClick={updateSort} sort>
             <Text pr={5} size={15} lh={18} color="rgba(31, 31, 31, 0.79)">
               Отсортировать по дате
             </Text>
@@ -84,17 +77,7 @@ export default function Cards({}) {
           <SearchIcon src={searchIcon} alt="search" />
         </SearchBlock>
       </Options>
-      {cards.length !== 0 ? (
-        <CardsContainer>
-          {cards.map((card: CardType) => {
-            return <OneCard withHeart key={card.id} cardAbout={card} />;
-          })}
-        </CardsContainer>
-      ) : (
-        <Text pt={80} pb={264} color="black" align="center" size={50}>
-          Карточек на данную категорию нет!
-        </Text>
-      )}
+      <CardList />
     </Container>
   );
 }
@@ -105,11 +88,6 @@ const Container = styled.div`
   margin: 0 auto;
   margin-top: 45px;
   margin-bottom: 110px;
-`;
-
-const CardsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 25%);
 `;
 
 const Options = styled.div`

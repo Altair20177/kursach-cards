@@ -1,32 +1,30 @@
 import styled from "styled-components";
-import { CategoryType, CategoryTypeFetch, OneNewsType } from "../../types";
-import Text from "../generic/Text";
-import firstNews from "./images/news/firstNews.png";
-import secondNews from "./images/news/secondNews.png";
-import thirdNews from "./images/news/thirdNews.png";
+import { CategoryType, CategoryTypeFetch } from "../../types";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { fetchCategories } from "../../http/categoriesApi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setAllCategories } from "../../store/categoiesSlice";
+import { MainContext } from "../../context";
+import NewsList from "../news/NewsList";
 
-const news: Array<OneNewsType> = [
-  {
-    id: 0,
-    image: firstNews,
-    text: "Открытие нового кинотеатра в Минске!",
-  },
-  {
-    id: 1,
-    image: secondNews,
-    text: "В Минском Национальном музее проводят реставрацию музейных ценностей",
-  },
-  {
-    id: 2,
-    image: thirdNews,
-    text: "Сеть ресторанов Макдональдс уходит из Беларуси!",
-  },
-];
+// const news: Array<OneNewsType> = [
+//   {
+//     id: 0,
+//     image: firstNews,
+//     text: "Открытие нового кинотеатра в Минске!",
+//   },
+//   {
+//     id: 1,
+//     image: secondNews,
+//     text: "В Минском Национальном музее проводят реставрацию музейных ценностей",
+//   },
+//   {
+//     id: 2,
+//     image: thirdNews,
+//     text: "Сеть ресторанов Макдональдс уходит из Беларуси!",
+//   },
+// ];
 
 const categoriesClient: Array<CategoryType> = [
   {
@@ -91,11 +89,8 @@ const categoriesClient: Array<CategoryType> = [
   },
 ];
 
-interface MainMenuProps {
-  setShowBigHeader: (flag: boolean) => void;
-}
-
-export default function MainMenu({ setShowBigHeader }: MainMenuProps) {
+export default function MainMenu() {
+  const { setShowBigHeader } = useContext(MainContext);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { categories } = useAppSelector((store) => store.categories);
@@ -115,32 +110,29 @@ export default function MainMenu({ setShowBigHeader }: MainMenuProps) {
   function chooseCategory(category: string) {
     navigate(`${category}`);
   }
-
   return (
     <>
       <Title>Новости</Title>
-      <Content>
-        {news.map((news: OneNewsType) => (
-          <News key={news.id}>
-            <Img src={news.image} alt="news_image" />
-            <Text size={16} lh={20} color="#335250">
-              {news.text}
-            </Text>
-          </News>
-        ))}
-      </Content>
+      <NewsList />
       <Title>Категории</Title>
       <Categories>
-        {categories.map((category: CategoryTypeFetch) => {
+        {categories?.map((category: CategoryTypeFetch) => {
           return (
             <CategoryBlock
-              onClick={() => chooseCategory(category.categoryName)}
+              onClick={() => chooseCategory(category.id.toString())}
               key={category.id}
-              image={require(`${
-                categoriesClient.find(
+              image={
+                categoriesClient.findIndex(
                   (obj) => obj.link === category.categoryName
-                )?.image
-              }.png`)}
+                ) !== -1
+                  ? require(`${
+                      categoriesClient.find(
+                        (obj) => obj.link === category.categoryName
+                      )?.image
+                    }.png`)
+                  : `https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483141.jpg`
+              }
+              title={category.categoryName}
             ></CategoryBlock>
           );
         })}
@@ -186,6 +178,8 @@ const CategoryBlock = styled.div<{ image: string }>`
   width: 238px;
   height: 234px;
   background-image: url(${(p) => p.image});
+  background-position: center;
+  background-size: cover;
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -197,18 +191,4 @@ const CategoryBlock = styled.div<{ image: string }>`
     cursor: pointer;
     transform: scale(1.1);
   }
-`;
-
-const News = styled.div`
-  width: 346px;
-  height: 121px;
-  background: rgba(243, 243, 242, 0.4);
-  box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-`;
-
-const Img = styled.img`
-  padding-right: 15px;
 `;

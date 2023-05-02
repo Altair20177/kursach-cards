@@ -1,3 +1,5 @@
+import { RcFile } from "antd/es/upload";
+
 export type OneNewsType = {
   id: number;
   image: string;
@@ -38,6 +40,8 @@ export type UserType = {
   userRole: string;
   phone: string | null;
   email: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export type OrganizationType = null | {
@@ -55,4 +59,14 @@ export type OrganizationType = null | {
   photo5: string;
   userId: number;
   workTime: string;
+  workTimeEnd: string;
 };
+
+export interface INews {
+  id: number;
+  name: string;
+  description: string;
+  image: RcFile | string;
+  createdAt: string;
+  updatedAt: string;
+}

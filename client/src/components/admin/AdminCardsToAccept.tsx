@@ -1,74 +1,93 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-import {
-  fetchAcceptCard,
-  fetchCardsToAccept,
-  fetchRejectCard,
-} from "../../http/cardApi";
-import { CardType } from "../../types";
 import OneCard from "../cards/OneCard";
 import Message from "../generic/Message";
 import Text from "../generic/Text";
+import {
+  useAcceptCardMutation,
+  useGetCardsByAcceptQuery,
+  useRejectCardMutation,
+} from "../../store/cardApi";
+import { Empty, Result, Spin, Layout, notification } from "antd";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 export default function AdminCardsToAccept() {
-  const [cardsToAccept, setCardsToAccept] = useState<CardType[]>([]);
-  const [showMessage, setShowMessage] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>("");
-
-  useEffect(() => {
-    fetchCardsToAccept().then((data) => setCardsToAccept(data));
-  }, []);
+  // const [cardsToAccept, setCardsToAccept] = useState<CardType[]>([]);
+  const {
+    data: cardsToAccept,
+    isLoading,
+    isError,
+    error,
+  } = useGetCardsByAcceptQuery(undefined);
+  const [fetchAcceptCard] = useAcceptCardMutation();
+  const [fetchRejectCard] = useRejectCardMutation();
+  // useEffect(() => {
+  //   fetchCardsToAccept().then((data) => setCardsToAccept(data));
+  // }, []);
 
   function acceptCard(cardId: number) {
-    fetchAcceptCard(cardId);
-    setCardsToAccept(cardsToAccept.filter((card) => card.id !== cardId));
-    setStatus(" утверждена");
-
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
+    fetchAcceptCard(cardId).then(() => {
+      notification.success({
+        message: "Карточка утверждена",
+      });
+    });
   }
 
   function rejectCard(cardId: number) {
-    fetchRejectCard(cardId);
-    setCardsToAccept(cardsToAccept.filter((card) => card.id !== cardId));
-    setStatus(" отклонена");
-
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
+    fetchRejectCard(cardId).then(() => {
+      notification.info({
+        message: "Карточка отклонена",
+      });
+    });
   }
-
+  if (isLoading) {
+    return (
+      <Layout
+        style={{
+          background: "transparent",
+          height: "auto",
+        }}
+      >
+        <Spin />
+      </Layout>
+    );
+  }
+  if (isError) {
+    return (
+      <Result
+        status="error"
+        title={"Ошибка при загрузке карточек"}
+        subTitle="Перед повторной отправкой проверьте и измените следующую информацию."
+      >
+        Причина: {(error as FetchBaseQueryError)?.status}
+      </Result>
+    );
+  }
+  if (!cardsToAccept?.length) {
+    return <Empty description={"Список карточек пуст"} />;
+  }
   return (
     <>
       <Title>Карточки на утверждение</Title>
-      {cardsToAccept.length !== 0 ? (
-        cardsToAccept.map((card: CardType) => {
-          return (
-            <CardsContainer>
-              <div key={card.id}>
-                <OneCard withHeart={false} key={card.id} cardAbout={card} />
-                <ButtonsBlock>
-                  <Button onClick={() => acceptCard(card.id)}>
-                    <Text align="center" size={16}>
-                      Утвердить
-                    </Text>
-                  </Button>
-                  <Button onClick={() => rejectCard(card.id)}>
-                    <Text align="center" size={16}>
-                      Отклонить
-                    </Text>
-                  </Button>
-                </ButtonsBlock>
-              </div>
-            </CardsContainer>
-          );
-        })
-      ) : (
-        <Text color="black" align="center" size={50} mt={100} mb={300}>
-          Карточек на утверждение нет!
-        </Text>
-      )}
-
-      {showMessage && <Message>карточка{status}</Message>}
+      {cardsToAccept.map((card) => (
+        <CardsContainer>
+          <div key={card.id}>
+            <OneCard withHeart={false} key={card.id} cardAbout={card} />
+            <ButtonsBlock>
+              <Button onClick={() => acceptCard(card.id)}>
+                <Text align="center" size={16}>
+                  Утвердить
+                </Text>
+              </Button>
+              <Button onClick={() => rejectCard(card.id)}>
+                <Text align="center" size={16}>
+                  Отклонить
+                </Text>
+              </Button>
+            </ButtonsBlock>
+          </div>
+        </CardsContainer>
+      ))}
     </>
   );
 }

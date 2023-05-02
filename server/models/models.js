@@ -36,7 +36,7 @@ const RequestToAdmin = sequelize.define("request_to_admin", {
 const Card = sequelize.define("card", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   //organizationId: { type: DataTypes.INTEGER },
-  //categoryId: { type: DataTypes.INTEGER },
+  categoryId: { type: DataTypes.INTEGER },
   cardName: { type: DataTypes.STRING },
   dateTimeStart: { type: DataTypes.DATE },
   dateTimeFinish: { type: DataTypes.DATE },
@@ -63,11 +63,19 @@ const Organization = sequelize.define("organization", {
   organizationAddress: { type: DataTypes.STRING },
   webSite: { type: DataTypes.STRING },
   workTime: { type: DataTypes.STRING },
+  workTimeEnd: { type: DataTypes.STRING },
 });
 
 const Category = sequelize.define("category", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   categoryName: { type: DataTypes.STRING },
+});
+
+const News = sequelize.define("new", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING },
+  description: { type: DataTypes.STRING },
+  image: { type: DataTypes.STRING },
 });
 
 User.hasOne(UserLogin);
@@ -108,4 +116,5 @@ module.exports = {
   Card,
   Organization,
   Category,
+  News,
 };

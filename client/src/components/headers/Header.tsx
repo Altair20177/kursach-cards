@@ -40,6 +40,7 @@ export default function Header({ size }: HeaderProps) {
     dispatch(setUserData(null));
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("userData");
     navigate("main");
   }
 
@@ -110,11 +111,8 @@ export default function Header({ size }: HeaderProps) {
           setModalIsOpen={setModalIsOpen}
         />
       </ModalContainer>
-      <ModalContainer
-        isOpen={modalIsOpen2}
-        setIsOpen={setModalIsOpen2}
-      >
-        <ModalRequest setIsOpen={setModalIsOpen2}/>
+      <ModalContainer isOpen={modalIsOpen2} setIsOpen={setModalIsOpen2}>
+        <ModalRequest setIsOpen={setModalIsOpen2} />
       </ModalContainer>
       {showMessage && <Message>Необходимо авторизоваться!</Message>}
     </>

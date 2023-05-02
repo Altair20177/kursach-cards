@@ -3,10 +3,12 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Text from "../components/generic/Text";
 import { useAppSelector } from "../store/hooks";
+import { UserRole } from "../store/userSlice";
 
 type NavType = {
   text: string;
   link: string;
+  authorities?: UserRole[];
 };
 
 const NavForAdmin: NavType[] = [
@@ -36,6 +38,10 @@ const NavForSuperAdmin: NavType[] = [
   {
     text: "Карточки на утверждение",
     link: "cards-to-accept",
+  },
+  {
+    text: "Новости",
+    link: "/news",
   },
 ];
 

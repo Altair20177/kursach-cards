@@ -1,91 +1,100 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import { createRequest } from "../../http/organizationApi";
 import Message from "../generic/Message";
 import Text from "../generic/Text";
+import { useGetCategoriesQuery } from "../../store/categoryApi";
+
+const categoriesDesc: { name: string; title: string }[] = [
+  {
+    name: "Рестораны",
+    title: "restaraunts",
+  },
+  {
+    name: "Кино",
+    title: "cinema",
+  },
+  {
+    name: "Театр",
+    title: "theatre",
+  },
+  {
+    name: "Выставки",
+    title: "exhibitions",
+  },
+  {
+    name: "Цирк",
+    title: "circus",
+  },
+  {
+    name: "Мастер-классы",
+    title: "master-classes",
+  },
+  {
+    name: "Встречи",
+    title: "meets",
+  },
+  {
+    name: "Экскурсии",
+    title: "excursions",
+  },
+  {
+    name: "Спорт",
+    title: "sport",
+  },
+  {
+    name: "Обучение",
+    title: "lessons",
+  },
+  {
+    name: "Детям",
+    title: "children",
+  },
+  {
+    name: "Концерты",
+    title: "concerts",
+  },
+  {
+    name: "Бары",
+    title: "bars",
+  },
+  {
+    name: "Клубы",
+    title: "clubs",
+  },
+  {
+    name: "Другое",
+    title: "other",
+  },
+];
 
 export default function ModalRequest({
   setIsOpen,
 }: {
   setIsOpen: (flag: boolean) => void;
 }) {
+  const {
+    data: categories,
+    isLoading,
+    isError,
+  } = useGetCategoriesQuery(undefined);
   const [organization, setOrganization] = useState<string>("");
-  const [sphere, setSphere] = useState<string>("");
+  const [sphere, setSphere] = useState<string>(
+    !!categories?.length ? categories[0].categoryName : ""
+  );
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
-  const categoriesDesc: { name: string; title: string }[] = [
-    {
-      name: "Рестораны",
-      title: "restaraunts",
-    },
-    {
-      name: "Кино",
-      title: "cinema",
-    },
-    {
-      name: "Театр",
-      title: "theatre",
-    },
-    {
-      name: "Выставки",
-      title: "exhibitions",
-    },
-    {
-      name: "Цирк",
-      title: "circus",
-    },
-    {
-      name: "Мастер-классы",
-      title: "master-classes",
-    },
-    {
-      name: "Встречи",
-      title: "meets",
-    },
-    {
-      name: "Экскурсии",
-      title: "excursions",
-    },
-    {
-      name: "Спорт",
-      title: "sport",
-    },
-    {
-      name: "Обучение",
-      title: "lessons",
-    },
-    {
-      name: "Детям",
-      title: "children",
-    },
-    {
-      name: "Концерты",
-      title: "concerts",
-    },
-    {
-      name: "Бары",
-      title: "bars",
-    },
-    {
-      name: "Клубы",
-      title: "clubs",
-    },
-    {
-      name: "Другое",
-      title: "other",
-    },
-  ];
-
   function sendRequest() {
-    if (categoriesDesc.find((category) => category.name === sphere)) {
+    if (categories?.find((category) => category.categoryName === sphere)) {
       createRequest(
         organization,
-        categoriesDesc.find((category) => category.name === sphere)?.title,
+        categories?.find((category) => category.categoryName === sphere)
+          ?.categoryName,
         phone,
         address,
-        localStorage.getItem("userId")
+        Number(localStorage.getItem("userId"))
       );
       setIsOpen(false);
     } else {
@@ -93,6 +102,13 @@ export default function ModalRequest({
       setTimeout(() => setShowMessage(false), 4000);
     }
   }
+
+  useEffect(() => {
+    if (!categories) {
+      return;
+    }
+    setSphere(categories[0].categoryName);
+  }, [categories]);
 
   return (
     <Block>
@@ -114,11 +130,18 @@ export default function ModalRequest({
             <Text pt={10} pb={10} size={16} lh={20} color="#292929">
               Сфера деятельности
             </Text>
-            <Input
+            <Select onChange={(e) => setSphere(e.target.value)} value={sphere}>
+              {categories?.map(({ categoryName }) => (
+                <option value={categoryName} key={categoryName}>
+                  {categoryName}
+                </option>
+              ))}
+            </Select>
+            {/* <Input
               value={sphere}
               onChange={(e) => setSphere(e.target.value)}
               width={100}
-            />
+            /> */}
           </div>
           <div>
             <Text pt={10} pb={10} size={16} lh={20} color="#292929">
@@ -185,6 +208,16 @@ const Body = styled.div`
 `;
 
 const Input = styled.input<{ width?: number }>`
+  width: ${(p) => (p.width ? p.width : 100)}%;
+  background: #ffffff;
+  border: 1px solid rgba(53, 53, 53, 0.6);
+  border-radius: 20px;
+  height: 36px;
+  padding-left: 15px;
+  font-size: 16px;
+`;
+
+const Select = styled.select<{ width?: number }>`
   width: ${(p) => (p.width ? p.width : 100)}%;
   background: #ffffff;
   border: 1px solid rgba(53, 53, 53, 0.6);
