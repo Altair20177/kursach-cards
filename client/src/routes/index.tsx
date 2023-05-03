@@ -21,6 +21,7 @@ const AdminPanel = lazy(() => import("../pages/AdminPanel"));
 const NewsPage = lazy(() => import("../pages/NewsPage"));
 const NewsIdPage = lazy(() => import("../pages/NewsIdPage"));
 const NewsPageCreate = lazy(() => import("../pages/NewsPageCreate"));
+const CardPage = lazy(() => import("../pages/CardPage"));
 
 export const Routing = () => {
   return (
@@ -34,6 +35,7 @@ export const Routing = () => {
           element={<Organization />}
         />
         <Route path="/main/favorites" element={<Favorites />} />
+        <Route path="/cards/:id" element={<CardPage />} />
         <Route path="/news">
           <Route path=":id" element={<NewsIdPage />} />
           <Route index element={<NewsPage />} />

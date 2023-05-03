@@ -7,7 +7,8 @@ import { Content } from "antd/es/layout/layout";
 
 const CardsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 25%);
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
 `;
 
 const CardList = () => {

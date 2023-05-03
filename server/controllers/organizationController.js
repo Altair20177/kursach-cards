@@ -68,9 +68,8 @@ class OrganizationController {
     const organization = await Organization.findOne({ where: { userId } });
 
     const cards = await Card.findAll({
-      where: { organizationId: organization?.id, toAccept: false },
+      where: { organizationId: organization?.id },
     });
-
     return res.json(cards);
   }
 
@@ -147,6 +146,25 @@ class OrganizationController {
     );
 
     return res.json(organization);
+  }
+
+  async updateOrganizationCard(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { organizationId, ...rest } = req.params;
+      await Card.update(
+        { ...rest },
+        {
+          where: {
+            id,
+            organizationId,
+          },
+        }
+      );
+      res.json({ id, organizationId });
+    } catch (err) {
+      next(ApiError.badRequest(e.message));
+    }
   }
 }
 
