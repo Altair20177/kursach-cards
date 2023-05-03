@@ -35,7 +35,7 @@ const RequestToAdmin = sequelize.define("request_to_admin", {
 
 const Card = sequelize.define("card", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  //organizationId: { type: DataTypes.INTEGER },
+  organizationId: { type: DataTypes.INTEGER },
   categoryId: { type: DataTypes.INTEGER },
   cardName: { type: DataTypes.STRING },
   dateTimeStart: { type: DataTypes.DATE },
@@ -47,6 +47,8 @@ const Card = sequelize.define("card", {
   eventAddress: { type: DataTypes.STRING },
   webSite: { type: DataTypes.STRING },
   toAccept: { type: DataTypes.BOOLEAN },
+  isFree: { type: DataTypes.BOOLEAN, defaultValue: true },
+  price: { type: DataTypes.FLOAT, defaultValue: 0 },
 });
 
 const Organization = sequelize.define("organization", {

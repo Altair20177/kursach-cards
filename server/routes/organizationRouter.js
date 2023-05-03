@@ -10,6 +10,7 @@ router.get(
   "/getCards/:userId",
   organizationController.getCardsFromOrganization
 );
+router.get("/getCards/:id", organizationController.getCardsFromOrganization);
 router.get(
   "/getByAdmin/:userId",
   organizationController.getOrganizationByAdminId

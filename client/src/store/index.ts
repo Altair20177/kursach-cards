@@ -6,6 +6,7 @@ import { categoryApi } from "./categoryApi";
 import { cardApi } from "./cardApi";
 import { newsApi } from "./newsApi";
 import { userApi } from "./userApi";
+import { organizationApi } from "./organizationApi";
 
 export const store = configureStore({
   reducer: combineReducers({
@@ -16,13 +17,15 @@ export const store = configureStore({
     [cardApi.reducerPath]: cardApi.reducer,
     [newsApi.reducerPath]: newsApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [organizationApi.reducerPath]: organizationApi.reducer,
   }),
   middleware(getDefaultMiddleware) {
     return getDefaultMiddleware().concat(
       categoryApi.middleware,
       cardApi.middleware,
       newsApi.middleware,
-      userApi.middleware
+      userApi.middleware,
+      organizationApi.middleware
     );
   },
 });
