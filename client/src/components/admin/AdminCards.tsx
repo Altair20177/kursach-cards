@@ -1,51 +1,28 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { fetchPublishedCards } from "../../http/organizationApi";
+import { CardType } from "../../types";
 import OneCard from "../cards/OneCard";
-import { useGetOrganizationCardsQuery } from "../../store/organizationApi";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import { Layout, Spin, Result, Empty } from "antd";
 
 export default function AdminCards() {
-  const {
-    data: organizationCards,
-    isLoading,
-    isError,
-    error,
-  } = useGetOrganizationCardsQuery(+localStorage.getItem("userId")!, {
-    skip: !localStorage.getItem("userId"),
-  });
-  if (isLoading) {
-    return (
-      <Layout
-        style={{
-          background: "transparent",
-          height: "auto",
-        }}
-      >
-        <Spin />
-      </Layout>
+  const { pathname } = useLocation();
+  const [organizationsCards, setOrganizationsCards] = useState<CardType[]>([]);
+
+  useEffect(() => {
+    fetchPublishedCards(localStorage.getItem("userId")).then((data) =>
+      setOrganizationsCards(data)
     );
-  }
-  if (isError) {
-    return (
-      <Result
-        status="error"
-        title={"Ошибка при загрузке карточек"}
-        subTitle="Перед повторной отправкой проверьте и измените следующую информацию."
-      >
-        Причина: {(error as FetchBaseQueryError)?.status}
-      </Result>
-    );
-  }
-  if (!organizationCards?.length) {
-    return <Empty description={"Список карточек пуст"} />;
-  }
+  }, []);
+
   return (
     <>
       <Title>Опубликованные карточки</Title>
       <CardsContainer>
-        {organizationCards.map((card) => (
-          <OneCard withHeart={false} key={card.id} cardAbout={card} />
-        ))}
+        {organizationsCards.length !== 0 &&
+          organizationsCards.map((card: CardType) => {
+            return <OneCard withHeart={false} key={card.id} cardAbout={card} />;
+          })}
       </CardsContainer>
     </>
   );
@@ -55,6 +32,26 @@ const CardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 25%);
   margin-bottom: 100px;
+`;
+
+const ButtonsBlock = styled.div`
+  width: 80%;
+  margin: 0 auto;
+`;
+
+const Button = styled.div`
+  background: #335250;
+  border-radius: 20px;
+  transition: 0.2s;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 10px 30px;
+  width: fit-content;
+
+  &:hover {
+    background: #335250de;
+    cursor: pointer;
+  }
 `;
 
 const Title = styled.h2`

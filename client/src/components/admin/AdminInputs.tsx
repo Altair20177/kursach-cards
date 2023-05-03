@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 import Text from "../generic/Text";
 import Input from "./Input";
 import TextArea from "./TextArea";
+import { ReactComponent as Plus } from "./images/plus.svg";
 import { useEffect, useState } from "react";
 import Message from "../generic/Message";
 import { OrganizationType } from "../../types";
@@ -11,14 +12,8 @@ import {
   updateOrganization,
 } from "../../http/organizationApi";
 import { createCard } from "../../http/cardApi";
-import {
-  DatePicker,
-  Button as AntdButton,
-  Space,
-  Upload,
-  Switch,
-  notification,
-} from "antd";
+import { DatePicker, Button as AntdButton, Space, Upload } from "antd";
+import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
 import dayjs from "dayjs";
@@ -27,6 +22,10 @@ const { RangePicker } = DatePicker;
 
 export default function AdminInputs() {
   const { pathname } = useLocation();
+  const [isImagesLoaded1, setIsImageLoaded1] = useState<boolean>(false);
+  const [isImagesLoaded2, setIsImageLoaded2] = useState<boolean>(false);
+  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [showMessage2, setShowMessage2] = useState<boolean>(false);
 
   const [eventName, setEventName] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
@@ -42,8 +41,6 @@ export default function AdminInputs() {
   const [workTime, setWorkTime] = useState<string>("");
   const [workTimeEnd, setWorkTimeEnd] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
-  const [price, setPrice] = useState<number>(0.0);
-  const [isFree, setIsFree] = useState<boolean>(true);
   const [organizationImages, setOrganizationImages] = useState<File[]>([]);
 
   const [organizationData, setOrganizationData] =
@@ -63,6 +60,16 @@ export default function AdminInputs() {
       setOrganizationName(organizationData?.name || "");
     }
   }, [organizationData?.id]);
+
+  function checkFile2(e: any) {
+    setIsImageLoaded1(true);
+    setCardImages(e.target.files);
+  }
+
+  function checkFile1(e: any) {
+    setIsImageLoaded2(true);
+    setOrganizationImages(e.target.files);
+  }
 
   function condition1() {
     if (
@@ -93,6 +100,7 @@ export default function AdminInputs() {
 
   function sendCard() {
     const formData = new FormData();
+    console.log(cardImages);
     formData.append("cardName", eventName);
     formData.append("dateTimeStart", startDate);
     formData.append("dateTimeFinish", endDate);
@@ -104,20 +112,18 @@ export default function AdminInputs() {
     formData.append("webSite", organizationData?.webSite || "");
     formData.append("categoryId", String(organizationData?.categoryId));
     formData.append("organizationId", String(organizationData?.id));
-    formData.append("isFree", String(isFree));
-    formData.append("price", String(price));
     formData.append("toAccept", "true");
 
-    createCard(formData).then(() => {
-      notification.success({
-        message: "Карточка создана!",
-      });
-    });
+    createCard(formData);
+
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
   }
 
   function updateOrganizationFunc() {
     const formData = new FormData();
 
+    // if (condition2()) {
     formData.append("name", organizationName);
     formData.append("description", organizationDescription);
     organizationImages.forEach((image, idx) => {
@@ -129,23 +135,21 @@ export default function AdminInputs() {
     formData.append("workTimeEnd", workTimeEnd);
 
     updateOrganization(organizationData?.id, formData).then(() => {
-      notification.success({
-        message: "Организация обновлена!",
-      });
+      setShowMessage2(true);
+      setTimeout(() => setShowMessage2(false), 3000);
     });
   }
 
-  useEffect(() => {
-    console.log(price);
-  }, [price]);
-
-  const changeEventDate = (_: any, dateString: [string, string] | string) => {
+  const changeEventDate = (
+    value: DatePickerProps["value"] | RangePickerProps["value"],
+    dateString: [string, string] | string
+  ) => {
     setStartDate(dateString[0]);
     setEndDate(dateString[1]);
   };
 
   const changeWorktimeDate = (
-    _: any,
+    value: DatePickerProps["value"] | RangePickerProps["value"],
     dateString: [string, string] | string
   ) => {
     setWorkTime(dateString[0]);
@@ -199,33 +203,20 @@ export default function AdminInputs() {
                     onChange={changeEventDate}
                   />
                 </Space>
-                <Space
-                  style={{
-                    display: "flex",
-                    margin: "0 0 20px 0",
-                  }}
-                >
-                  <Text size={16} color="#000">
-                    Вход бесплатный?
-                  </Text>
-                  <Switch
-                    checked={isFree}
-                    onChange={(e) => {
-                      if (!!e) {
-                        setPrice(0);
-                      }
-                      setIsFree(e);
-                    }}
-                  />
-                </Space>
-                {!isFree ? (
-                  <Input
-                    value={price.toString()}
-                    setValue={(e) => setPrice(e.target.value)}
-                    height={40}
-                    label="Стоимость события"
-                  />
-                ) : null}
+                {/* <Input
+                  value={startDate}
+                  setValue={(e) => setStartDate(e.target.value)}
+                  height={40}
+                  label="Время начала мероприятия"
+                  placeholder="гггг-мм-дд"
+                />
+                <Input
+                  value={endDate}
+                  setValue={(e) => setEndDate(e.target.value)}
+                  height={40}
+                  label="Время окончания мероприятия"
+                  placeholder="гггг-мм-дд"
+                /> */}
                 <Input
                   value={eventAddress}
                   setValue={(e) => setEventAddress(e.target.value)}
@@ -283,6 +274,13 @@ export default function AdminInputs() {
                     marginBottom: 20,
                   }}
                 />
+                {/* <Input
+                  value={workTime}
+                  setValue={(e) => setWorkTime(e.target.value)}
+                  height={35}
+                  label="Время работы"
+                  placeholder="пн-пт 8:00-22:00"
+                /> */}
                 <Input
                   value={website}
                   setValue={(e) => setWebsite(e.target.value)}
@@ -292,6 +290,7 @@ export default function AdminInputs() {
                 <Button onClick={updateOrganizationFunc}>
                   <Text size={16}>Сохранить</Text>
                 </Button>
+                {/* {showMessage2 && <Message>Данные обновлены!</Message>} */}
               </>
             )}
           </Row>
@@ -364,6 +363,13 @@ export default function AdminInputs() {
           </form>
         )}
       </Rows>
+      {showMessage && (
+        <Message>
+          {condition1() || condition2()
+            ? "Карточка отправлена на утверждение"
+            : "Заполните поля!"}
+        </Message>
+      )}
     </Container>
   );
 }

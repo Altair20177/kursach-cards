@@ -11,8 +11,7 @@ import Message from "../generic/Message";
 import Text from "../generic/Text";
 import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
-import { getUserRole } from "../../store/userSlice";
-import { Button } from "antd";
+
 
 interface OneCardProps {
   cardAbout: CardType;
@@ -40,6 +39,7 @@ export default function OneCard({
       addCardToFavourites(cardId, localStorage.getItem("userId"));
     }
   }
+
   return (
     <>
       {cardAbout && (
@@ -89,33 +89,22 @@ export default function OneCard({
             <Text color="rgba(31, 31, 31, 0.79)" size={9} ls={0.115}>
               {cardAbout.workingTime}
             </Text>
-            <Footer
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                flexDirection: "column",
-              }}
-            >
+            <Footer>
               <Text color="#DECDA9" size={12} lh={15}>
-                Вход{" "}
-                {cardAbout.isFree
-                  ? `свободный`
-                  : `платный. Цена - ${cardAbout.price}`}
+                Вход свободный
               </Text>
               <Text
-                onClick={() => (window.location.href = `${cardAbout.webSite}`)}
+                onClick={() =>
+                  (window.location.href = `https://${cardAbout.webSite}.by`)
+                }
                 underline
                 color="#DECDA9"
                 size={12}
                 lh={15}
               >
-                {cardAbout.webSite || ""}
+                www.{cardAbout.webSite}.by
               </Text>
             </Footer>
-            <Button onClick={() => navigate(`/cards/${cardAbout?.id}`)}>
-              Подробнее
-            </Button>
           </Description>
         </Block>
       )}
@@ -138,7 +127,6 @@ const Block = styled.div`
   position: relative;
   margin: 0 auto;
   margin-top: 40px;
-  cursor: pointer;
 `;
 
 const Image = styled.div<{ src: string }>`

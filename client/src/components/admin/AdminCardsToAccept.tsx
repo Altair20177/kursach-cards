@@ -1,5 +1,7 @@
+import { useState } from "react";
 import styled from "styled-components";
 import OneCard from "../cards/OneCard";
+import Message from "../generic/Message";
 import Text from "../generic/Text";
 import {
   useAcceptCardMutation,

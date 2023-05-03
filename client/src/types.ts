@@ -20,7 +20,7 @@ export type CategoryTypeFetch = {
 
 export type CardType = {
   id: number;
-  categoryId: number;
+  category: string;
   cardName: string;
   description: string;
   webSite: string;
@@ -31,9 +31,6 @@ export type CardType = {
   photo1: string;
   photo2: string;
   photo3: string;
-  isFree: boolean;
-  toAccept: boolean;
-  price: number;
 };
 
 export type UserType = {
