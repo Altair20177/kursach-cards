@@ -21,7 +21,7 @@ export const cardApi = createApi({
         method: "PUT",
         body: card,
       }),
-      invalidatesTags: ["CardDetails"],
+      invalidatesTags: ["Card", "AcceptedCard", "CardDetails"],
     }),
     getCardsByCategory: builder.query<CardType[], string>({
       query: (categoryId: string) => `/category/${categoryId}`,
@@ -33,7 +33,7 @@ export const cardApi = createApi({
     }),
     getCardsByOrganization: builder.query<CardType[], number>({
       query: (id) => `/organization/${id}`,
-      providesTags: ["Card"],
+      providesTags: ["Card", "AcceptedCard", "CardDetails"],
     }),
     addCard: builder.mutation<CardType, undefined>({
       query: () => "/",
@@ -41,11 +41,11 @@ export const cardApi = createApi({
     }),
     acceptCard: builder.mutation<CardType, number>({
       query: (id: number) => `/acceptCard/${id}`,
-      invalidatesTags: ["AcceptedCard"],
+      invalidatesTags: ["Card", "AcceptedCard", "CardDetails"],
     }),
     rejectCard: builder.mutation<CardType, number>({
       query: (id: number) => `/rejectCard/${id}`,
-      invalidatesTags: ["AcceptedCard"],
+      invalidatesTags: ["Card", "AcceptedCard", "CardDetails"],
     }),
   }),
 });

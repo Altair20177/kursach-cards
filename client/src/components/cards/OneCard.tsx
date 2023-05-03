@@ -13,11 +13,13 @@ import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
 import { getUserRole } from "../../store/userSlice";
 import { Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 interface OneCardProps {
   cardAbout: CardType;
   withHeart?: boolean;
   withRedHeart?: boolean;
+  onDeleteCard?: (id: number) => void;
   deleteFromFavourites?: (id: number) => void;
 }
 
@@ -26,6 +28,7 @@ export default function OneCard({
   withHeart,
   withRedHeart,
   deleteFromFavourites,
+  onDeleteCard,
 }: OneCardProps) {
   const { isAuthorized } = useAppSelector((store) => store.user);
   const navigate = useNavigate();
@@ -116,6 +119,11 @@ export default function OneCard({
             <Button onClick={() => navigate(`/cards/${cardAbout?.id}`)}>
               Подробнее
             </Button>
+            {onDeleteCard ? (
+              <Button onClick={() => onDeleteCard!(cardAbout.id)}>
+                <DeleteOutlined />
+              </Button>
+            ) : null}
           </Description>
         </Block>
       )}
@@ -138,7 +146,6 @@ const Block = styled.div`
   position: relative;
   margin: 0 auto;
   margin-top: 40px;
-  cursor: pointer;
 `;
 
 const Image = styled.div<{ src: string }>`
