@@ -1,14 +1,27 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { CardType } from "../types";
 
+interface IUpdateCardRequest {
+  id: number;
+  card: Omit<CardType, "id">;
+}
+
 export const cardApi = createApi({
   reducerPath: "cardApi",
   baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:5000/api/card` }),
-  tagTypes: ["Card", "AcceptedCard"],
+  tagTypes: ["Card", "AcceptedCard", "CardDetails"],
   endpoints: (builder) => ({
-    getCards: builder.query<CardType[], undefined>({
-      query: () => "",
-      providesTags: ["Card"],
+    getCardById: builder.query<CardType, string>({
+      query: (id: string) => `/${id}`,
+      providesTags: ["CardDetails"],
+    }),
+    updateCard: builder.mutation<string, IUpdateCardRequest>({
+      query: ({ id, card }) => ({
+        url: `/${id}`,
+        method: "PUT",
+        body: card,
+      }),
+      invalidatesTags: ["CardDetails"],
     }),
     getCardsByCategory: builder.query<CardType[], string>({
       query: (categoryId: string) => `/category/${categoryId}`,
@@ -39,9 +52,11 @@ export const cardApi = createApi({
 
 export const {
   useAddCardMutation,
-  useGetCardsQuery,
   useGetCardsByCategoryQuery,
   useGetCardsByAcceptQuery,
   useAcceptCardMutation,
   useRejectCardMutation,
+  useGetCardsByOrganizationQuery,
+  useGetCardByIdQuery,
+  useUpdateCardMutation,
 } = cardApi;

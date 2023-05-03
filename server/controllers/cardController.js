@@ -6,7 +6,7 @@ const path = require("path");
 class CardController {
   async create(req, res, next) {
     try {
-      const {
+      let {
         cardName,
         dateTimeStart,
         dateTimeFinish,
@@ -16,9 +16,26 @@ class CardController {
         categoryId,
         organizationId,
         toAccept,
+        price,
+        isFree,
       } = req.body;
+      if (!req.files) {
+        const card = await Card.create({
+          cardName,
+          dateTimeStart,
+          dateTimeFinish,
+          description,
+          eventAddress,
+          webSite,
+          categoryId,
+          organizationId,
+          toAccept,
+          price,
+          isFree,
+        });
+        return res.json(card);
+      }
       const { photo1, photo2, photo3 } = req.files;
-      console.log("files", req.files);
       let fileName1 = uuid.v4() + ".jpg";
       let fileName2 = uuid.v4() + ".jpg";
       let fileName3 = uuid.v4() + ".jpg";
@@ -40,6 +57,7 @@ class CardController {
         photo2: fileName2,
         photo3: fileName3,
         toAccept,
+        price,
       });
       return res.json(card);
     } catch (e) {
@@ -72,16 +90,47 @@ class CardController {
     return res.json(cards);
   }
 
-  async getCardsToAccept(req, res) {
-    const cards = await Card.findAll({
-      where: { toAccept: true },
-    });
-    return res.json(cards);
+  async getCardById(req, res, next) {
+    try {
+      const { id } = req.params;
+      console.log("wtf");
+      const card = await Card.findByPk(id);
+      res.json(card);
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
+  }
+
+  async updateCard(req, res, next) {
+    try {
+      const { id } = req.params;
+      const card = await Card.update(
+        { ...req.body },
+        {
+          where: { id },
+        }
+      );
+      res.json(card);
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
+  }
+
+  async getCardsToAccept(req, res, next) {
+    try {
+      const cards = await Card.findAll({
+        where: {
+          toAccept: true,
+        },
+      });
+      return res.json(cards);
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
   }
 
   async acceptCard(req, res) {
     const { cardId } = req.params;
-
     const card = await Card.update(
       {
         toAccept: false,
