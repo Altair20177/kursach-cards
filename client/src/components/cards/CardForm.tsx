@@ -20,6 +20,9 @@ import { useUpdateCardMutation } from "../../store/cardApi";
 import { getImageUrl } from "../../utils/url";
 import dayjs from "dayjs";
 import { useGetCategoriesQuery } from "../../store/categoryApi";
+import { useAppSelector } from "../../store/hooks";
+import { getUserRole } from "../../store/userSlice";
+import CardDetails from "./CardDetails";
 
 const { RangePicker } = DatePicker;
 
@@ -34,6 +37,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
     isLoading,
     isError,
   } = useGetCategoriesQuery(undefined);
+  const userRole = useAppSelector(getUserRole);
   const changeEventDate =
     (setValues: any) => (_: any, dateString: [string, string] | string) => {
       console.log(dateString);
@@ -43,6 +47,9 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
         dateTimeEnd: dateString[1],
       });
     };
+  if (!(userRole === "superAdmin" || userRole === "admin")) {
+    return <CardDetails card={card} />;
+  }
   return (
     <Formik
       initialValues={card}

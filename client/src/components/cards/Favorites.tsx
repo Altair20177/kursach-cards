@@ -5,13 +5,12 @@ import {
   fetchFavouritesCardsByUserId,
 } from "../../http/cardApi";
 import { CardType } from "../../types";
-import Message from "../generic/Message";
 import Text from "../generic/Text";
 import OneCard from "./OneCard";
+import { notification } from "antd";
 
 export default function Favorites() {
   const [favouritesCards, setFavouritesCards] = useState<CardType[]>([]);
-  const [showMessage, setShowMessage] = useState<boolean>(false);
 
   useEffect(() => {
     fetchFavouritesCardsByUserId(localStorage.getItem("userId")).then((data) =>
@@ -20,12 +19,16 @@ export default function Favorites() {
   }, []);
 
   function deleteFromFavourites(cardId: number) {
-    deleteCardFromFavourites(localStorage.getItem("userId"), cardId);
-
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 4000);
-
-    setFavouritesCards(favouritesCards.filter((card) => card.id !== cardId));
+    deleteCardFromFavourites(localStorage.getItem("userId"), cardId).then(
+      () => {
+        notification.info({
+          message: "Карточка была удалена из избранного",
+        });
+        setFavouritesCards(
+          favouritesCards.filter((card) => card.id !== cardId)
+        );
+      }
+    );
   }
 
   return (
@@ -51,7 +54,6 @@ export default function Favorites() {
           </CardsContainer>
         )}
       </Container>
-      {showMessage && <Message>Карточка удалена из избранного!</Message>}
     </>
   );
 }

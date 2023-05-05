@@ -3,12 +3,13 @@ import {
   useGetCardsByCategoryQuery,
   useRejectCardMutation,
 } from "../../store/cardApi";
-import { Spin, Empty, notification, Input, Space, Select } from "antd";
+import { Spin, Empty, notification, Input, Space, Select, Result } from "antd";
 import OneCard from "./OneCard";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { CardType } from "../../types";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 const { Search } = Input;
 
@@ -83,10 +84,16 @@ const CardList: FC = () => {
       </Content>
     );
   }
-  if (isError && error) {
-    notification.error({
-      message: "smth",
-    });
+  if (isError) {
+    return (
+      <Result
+        status="error"
+        title={"Ошибка при загрузке карточек"}
+        subTitle="Перед повторной отправкой проверьте и измените следующую информацию."
+      >
+        Причина: {(error as FetchBaseQueryError)?.status}
+      </Result>
+    );
   }
   if (!cards?.length) {
     return (
