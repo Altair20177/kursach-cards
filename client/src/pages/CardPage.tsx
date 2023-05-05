@@ -1,5 +1,5 @@
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import { Spin, Result, Empty, notification } from "antd";
+import { Spin, Result, Empty } from "antd";
 import { useParams } from "react-router-dom";
 import { useGetCardByIdQuery } from "../store/cardApi";
 import { Content } from "antd/es/layout/layout";

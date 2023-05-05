@@ -253,7 +253,6 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
                 }
                 setFieldValue("isFree", e);
               }}
-              disabled={!!values.price}
             />
           </AntdForm.Item>
           {!values.isFree ? (

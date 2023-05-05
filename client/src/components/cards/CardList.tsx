@@ -3,7 +3,16 @@ import {
   useGetCardsByCategoryQuery,
   useRejectCardMutation,
 } from "../../store/cardApi";
-import { Spin, Empty, notification, Input, Space, Select, Result } from "antd";
+import {
+  Spin,
+  Empty,
+  Input,
+  Space,
+  Select,
+  Result,
+  Switch,
+  Typography,
+} from "antd";
 import OneCard from "./OneCard";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
@@ -44,6 +53,16 @@ const getSortedCards = (cards: CardType[], sortType: string) =>
       })
     : [];
 
+const getFilteredCards = (cards: CardType[], isFree: boolean) =>
+  !!cards
+    ? [...cards]?.filter((card) => {
+        if (isFree) {
+          return card.isFree === isFree;
+        }
+        return true;
+      })
+    : [];
+
 const CardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -53,6 +72,7 @@ const CardsContainer = styled.div`
 const CardList: FC = () => {
   const [search, setSearch] = useState<string>("");
   const [sortType, setSortType] = useState<string>("");
+  const [isFree, setIsFree] = useState<boolean>(true);
   const [fetchDeleteCard] = useRejectCardMutation();
   const { categoryId } = useParams();
   const {
@@ -110,15 +130,17 @@ const CardList: FC = () => {
       </Content>
     );
   }
-  const filteredCards = getSortedCards(
-    !!search
-      ? [...cards!]?.filter((card) =>
-          card.cardName.concat(card.description).includes(search)
-        )
-      : cards,
-    sortType
+  const filteredCards = getFilteredCards(
+    getSortedCards(
+      !!search
+        ? [...cards!]?.filter((card) =>
+            card.cardName.concat(card.description).includes(search)
+          )
+        : cards,
+      sortType
+    ),
+    isFree
   );
-
   return (
     <Content
       style={{
@@ -171,9 +193,13 @@ const CardList: FC = () => {
           defaultValue={""}
         />
       </Space>
+      <Space>
+        <Typography>Вход бесплатный</Typography>
+        <Switch checked={isFree} onChange={setIsFree} />
+      </Space>
       {!!filteredCards?.length ? (
         <CardsContainer>
-          {filteredCards?.map((card) => {
+          {getFilteredCards(filteredCards, isFree)?.map((card) => {
             return (
               <OneCard
                 withHeart
@@ -185,7 +211,17 @@ const CardList: FC = () => {
           })}
         </CardsContainer>
       ) : (
-        <Empty description={"Карточек на данную категорию нет!"} />
+        <Content
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Empty description={"Карточек на данную категорию нет..."} />
+        </Content>
       )}
     </Content>
   );
