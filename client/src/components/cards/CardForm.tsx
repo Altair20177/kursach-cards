@@ -8,16 +8,13 @@ import {
   Upload,
   Button,
   Form as AntdForm,
-  Image,
   Space,
   DatePicker,
   Switch,
   Select,
 } from "antd";
-import { RcFile } from "antd/es/upload";
 import { Formik, Form } from "formik";
 import { useUpdateCardMutation } from "../../store/cardApi";
-import { getImageUrl } from "../../utils/url";
 import dayjs from "dayjs";
 import { useGetCategoriesQuery } from "../../store/categoryApi";
 import { useAppSelector } from "../../store/hooks";
@@ -32,11 +29,7 @@ interface CardFormProps {
 
 const CardForm: FC<CardFormProps> = ({ card }) => {
   const [fetchUpdatecard] = useUpdateCardMutation();
-  const {
-    data: categories,
-    isLoading,
-    isError,
-  } = useGetCategoriesQuery(undefined);
+  const { data: categories } = useGetCategoriesQuery(undefined);
   const userRole = useAppSelector(getUserRole);
   const changeEventDate =
     (setValues: any) => (_: any, dateString: [string, string] | string) => {
@@ -49,6 +42,11 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
     };
   if (!(userRole === "superAdmin" || userRole === "admin")) {
     return <CardDetails card={card} />;
+  }
+  if (card?.toAccept) {
+    notification.info({
+      message: "Внимание! Данная карточка пока не одобрена администратором",
+    });
   }
   return (
     <Formik

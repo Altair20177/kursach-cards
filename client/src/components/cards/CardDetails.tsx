@@ -87,8 +87,8 @@ const CardDetails: FC<CardDetailsProps> = ({ card }) => {
         >
           {[photo1, photo2, photo3].map((photo) =>
             !!photo ? (
-              <div style={contentStyle}>
-                <Image width={"100%"} src={getImageUrl(photo)} />
+              <div style={contentStyle} key={photo}>
+                <Image width={"100%"} height={360} src={getImageUrl(photo)} />
               </div>
             ) : null
           )}

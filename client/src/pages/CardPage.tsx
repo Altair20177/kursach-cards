@@ -49,11 +49,6 @@ const CardPage = () => {
       </Content>
     );
   }
-  if (card?.toAccept) {
-    notification.info({
-      message: "Внимание! Данная карточка пока не одобрена администратором",
-    });
-  }
   return (
     <Content
       style={{
