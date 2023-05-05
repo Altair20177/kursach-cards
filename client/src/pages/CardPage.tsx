@@ -1,5 +1,5 @@
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import { Layout, Spin, Result, Empty, notification } from "antd";
+import { Spin, Result, Empty, notification } from "antd";
 import { useParams } from "react-router-dom";
 import { useGetCardByIdQuery } from "../store/cardApi";
 import { Content } from "antd/es/layout/layout";
@@ -10,14 +10,17 @@ const CardPage = () => {
   const { data: card, isLoading, isError, error } = useGetCardByIdQuery(id!);
   if (isLoading) {
     return (
-      <Layout
+      <Content
         style={{
-          background: "transparent",
-          height: "auto",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Spin />
-      </Layout>
+      </Content>
     );
   }
   if (isError) {
@@ -32,7 +35,19 @@ const CardPage = () => {
     );
   }
   if (!card) {
-    return <Empty description={"Карточка отсутствует"} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Карточка нет..."} />
+      </Content>
+    );
   }
   if (card?.toAccept) {
     notification.info({

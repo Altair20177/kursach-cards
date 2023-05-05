@@ -3,7 +3,7 @@ import {
   useDeleteNewsByIdMutation,
   useGetNewsQuery,
 } from "../../store/newsApi";
-import { Empty, Result, Spin, Layout, notification } from "antd";
+import { Empty, Result, Spin, notification } from "antd";
 import NewsItem from "./NewsItem";
 import { useAppSelector } from "../../store/hooks";
 import { getUserRole } from "../../store/userSlice";
@@ -30,9 +30,17 @@ const NewsList = () => {
   );
   if (isLoading) {
     return (
-      <Layout>
-        <Spin />;
-      </Layout>
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Spin />
+      </Content>
     );
   }
   if (isError) {
@@ -47,7 +55,19 @@ const NewsList = () => {
     );
   }
   if (!news?.length) {
-    return <Empty description={"Список новостей пуст"} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Список новостей нет..."} />
+      </Content>
+    );
   }
   return (
     <Content

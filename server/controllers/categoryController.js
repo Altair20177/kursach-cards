@@ -8,7 +8,7 @@ class CategoryController {
     return res.json(category);
   }
 
-  async getAll(req, res) {
+  async getAll(_, res) {
     const categories = await Category.findAll();
     return res.json(categories);
   }

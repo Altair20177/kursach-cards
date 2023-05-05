@@ -4,19 +4,11 @@ import {
   useGetAdminsQuery,
 } from "../../store/userApi";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import {
-  Layout,
-  Spin,
-  Result,
-  Empty,
-  Table,
-  Button,
-  notification,
-  Tooltip,
-} from "antd";
+import { Spin, Result, Empty, Table, Button, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
 import { DeleteFilled } from "@ant-design/icons";
+import { Content } from "antd/es/layout/layout";
 
 export default function AdminMainPanel() {
   const {
@@ -31,31 +23,31 @@ export default function AdminMainPanel() {
       {
         title: "Id",
         dataIndex: "id",
-        key: 1,
+        key: "id",
         sorter: (a, b) => a.id - b.id,
       },
       {
         title: "Email",
         dataIndex: "email",
-        key: 2,
-        sorter: (a, b) => a.email - b.email,
+        key: "email",
+        sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: "Имя",
         dataIndex: "name",
-        key: 3,
-        sorter: (a, b) => a.name - b.name,
+        key: "name",
+        sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
         title: "Фамилия",
         dataIndex: "surname",
-        key: 4,
-        sorter: (a, b) => a.surname - b.surname,
+        key: "surname",
+        sorter: (a, b) => a.surname.localeCompare(b.surname),
       },
       {
         title: "Действия",
         dataIndex: "action",
-        key: 5,
+        key: "action",
         render: (_, record) => (
           <Button
             icon={<DeleteFilled />}
@@ -76,14 +68,17 @@ export default function AdminMainPanel() {
   );
   if (isLoading) {
     return (
-      <Layout
+      <Content
         style={{
-          background: "transparent",
-          height: "auto",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Spin />
-      </Layout>
+      </Content>
     );
   }
   if (isError) {
@@ -98,7 +93,19 @@ export default function AdminMainPanel() {
     );
   }
   if (!admins?.length) {
-    return <Empty description={"Список админов пуст"} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Список админов пуст..."} />
+      </Content>
+    );
   }
   return (
     <>
@@ -107,43 +114,9 @@ export default function AdminMainPanel() {
         columns={columns}
         dataSource={admins}
         bordered
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 5 }}
+        rowKey="id"
       />
-      {/* <Table>
-        <Row>
-          <Text align="center" color="black">
-            ID
-          </Text>
-          <Text align="center" color="black">
-            Email
-          </Text>
-          <Text align="center" color="black">
-            Имя
-          </Text>
-          <Text align="center" color="black">
-            Фамилия
-          </Text>
-        </Row>
-        {admins?.map((admin) => {
-          return (
-            <Row key={admin.email}>
-              <Text align="center" color="black">
-                {admin.id}
-              </Text>
-              <Text align="center" color="black">
-                {admin.email}
-              </Text>
-              <Text align="center" color="black">
-                {admin.name}
-              </Text>
-              <Text align="center" color="black">
-                {admin.surname}
-              </Text>
-
-            </Row>
-          );
-        })}
-      </Table> */}
     </>
   );
 }

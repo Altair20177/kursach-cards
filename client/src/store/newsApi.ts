@@ -22,6 +22,7 @@ export const newsApi = createApi({
     createNews: builder.mutation<number, INews>({
       query: (news) => ({
         url: `/`,
+        method: "POST",
         body: news,
       }),
       invalidatesTags: ["News"],

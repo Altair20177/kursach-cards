@@ -15,8 +15,16 @@ const NewsIdPage = () => {
   });
   if (isLoading) {
     return (
-      <Content>
-        <Spin />;
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Spin />
       </Content>
     );
   }
@@ -32,7 +40,19 @@ const NewsIdPage = () => {
     );
   }
   if (!news) {
-    return <Empty description={"Новости нет..."} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Новости нет..."} />
+      </Content>
+    );
   }
   return (
     <Content

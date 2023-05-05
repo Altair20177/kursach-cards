@@ -3,3 +3,6 @@ ALTER TABLE IF EXISTS public.cards
 
 ALTER TABLE IF EXISTS public.cards
     ADD COLUMN "price" numeric;
+
+ALTER TABLE IF EXISTS public.organizations
+    ADD COLUMN email character varying(255);

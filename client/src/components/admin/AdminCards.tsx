@@ -2,7 +2,8 @@ import styled from "styled-components";
 import OneCard from "../cards/OneCard";
 import { useGetOrganizationCardsQuery } from "../../store/organizationApi";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import { Layout, Spin, Result, Empty } from "antd";
+import { Spin, Result, Empty } from "antd";
+import { Content } from "antd/es/layout/layout";
 
 export default function AdminCards() {
   const {
@@ -15,14 +16,17 @@ export default function AdminCards() {
   });
   if (isLoading) {
     return (
-      <Layout
+      <Content
         style={{
-          background: "transparent",
-          height: "auto",
+          width: "100vw",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Spin />
-      </Layout>
+      </Content>
     );
   }
   if (isError) {
@@ -37,7 +41,19 @@ export default function AdminCards() {
     );
   }
   if (!organizationCards?.length) {
-    return <Empty description={"Список карточек пуст"} />;
+    return (
+      <Content
+        style={{
+          width: "100vw",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Список карточек пуст"} />
+      </Content>
+    );
   }
   return (
     <>

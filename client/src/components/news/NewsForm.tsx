@@ -12,27 +12,53 @@ import {
 import { LoadingOutlined, UploadOutlined } from "@ant-design/icons";
 import { Formik, Form } from "formik";
 import { getImageUrl } from "../../utils/url";
-import { useUpdateNewsMutation } from "../../store/newsApi";
+import {
+  useCreateNewsMutation,
+  useUpdateNewsMutation,
+} from "../../store/newsApi";
 import { useAppSelector } from "../../store/hooks";
 import { getUserRole } from "../../store/userSlice";
 import { RcFile } from "antd/es/upload";
+import { useLocation } from "react-router-dom";
 
 interface NewsFormProps {
   news: INews;
 }
 
 const NewsForm: FC<NewsFormProps> = ({ news }) => {
+  const location = useLocation();
   const [fetchUpdateNews] = useUpdateNewsMutation();
+  const [fetchCreateNews] = useCreateNewsMutation();
   const userRole = useAppSelector(getUserRole);
   const canEdit = useMemo(() => userRole === "superAdmin", [userRole]);
+  const isCreateForm = useMemo(
+    () => location.pathname === "/news/create",
+    [location.pathname]
+  );
   return (
     <Formik
       initialValues={news}
       onSubmit={(values, { setSubmitting }) => {
         const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("description", values.description);
-        formData.append("image", values.image);
+        Object.entries(values).forEach((entity) => {
+          const [key, value] = entity;
+          formData.append(key, value as any);
+        });
+        if (isCreateForm) {
+          fetchCreateNews(formData as unknown as INews).then((res) => {
+            setSubmitting(false);
+            if ("error" in res) {
+              notification.error({
+                message: (res.error as any)?.data?.message,
+              });
+              return;
+            }
+            notification.success({
+              message: "Новость успешно добавлена!",
+            });
+          });
+          return;
+        }
         fetchUpdateNews({
           id: news.id,
           news: formData as unknown as INews,
@@ -51,12 +77,14 @@ const NewsForm: FC<NewsFormProps> = ({ news }) => {
       }}
       validate={(values) => {
         const errors: any = {};
-        if (!values.name) {
-          errors["name"] = "Обязательное поле";
-        }
-        if (!values.description) {
-          errors["description"] = "Обязательное поле";
-        }
+        Object.entries(values).forEach((entity) => {
+          const [key, value] = entity;
+          if (!["id", "createdAt", "updatedAt"].includes(key)) {
+            if (!value) {
+              errors[key] = "Обязательное поле";
+            }
+          }
+        });
         return errors;
       }}
     >
@@ -69,7 +97,13 @@ const NewsForm: FC<NewsFormProps> = ({ news }) => {
         isValid,
         isSubmitting,
       }) => (
-        <Form>
+        <Form
+          style={{
+            boxShadow: "0 0 10px rgba(0,0,0,0.6)",
+            padding: 16,
+            borderRadius: 8,
+          }}
+        >
           <AntdForm.Item label="Название новости" rules={[{ required: true }]}>
             <Input
               placeholder="Введите название новости"
@@ -146,6 +180,16 @@ const NewsForm: FC<NewsFormProps> = ({ news }) => {
                   <Button icon={<UploadOutlined />}>Загрузить картинку</Button>
                 </Upload>
               </AntdForm.Item>
+              {touched.image && errors.image ? (
+                <Alert
+                  type="error"
+                  message={errors.image}
+                  banner
+                  style={{
+                    marginBottom: 20,
+                  }}
+                />
+              ) : null}
             </>
           ) : (
             <Image
@@ -154,7 +198,7 @@ const NewsForm: FC<NewsFormProps> = ({ news }) => {
               height={400}
             />
           )}
-          <AntdForm.Item>
+          <AntdForm.Item style={{ display: "flex", justifyContent: "center" }}>
             {canEdit ? (
               <Button
                 icon={isSubmitting ? <LoadingOutlined /> : null}
@@ -162,7 +206,7 @@ const NewsForm: FC<NewsFormProps> = ({ news }) => {
                 htmlType="submit"
                 danger={!isValid}
               >
-                Отправить на редактирование
+                {isCreateForm ? "Сохранить" : "Отправить на редактирование"}
               </Button>
             ) : null}
           </AntdForm.Item>

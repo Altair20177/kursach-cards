@@ -8,6 +8,7 @@ import {
 } from "../../store/cardApi";
 import { Empty, Result, Spin, Layout, notification } from "antd";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { Content } from "antd/es/layout/layout";
 
 export default function AdminCardsToAccept() {
   // const [cardsToAccept, setCardsToAccept] = useState<CardType[]>([]);
@@ -40,14 +41,17 @@ export default function AdminCardsToAccept() {
   }
   if (isLoading) {
     return (
-      <Layout
+      <Content
         style={{
-          background: "transparent",
-          height: "auto",
+          width: "100vw",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Spin />
-      </Layout>
+      </Content>
     );
   }
   if (isError) {
@@ -62,13 +66,25 @@ export default function AdminCardsToAccept() {
     );
   }
   if (!cardsToAccept?.length) {
-    return <Empty description={"Список карточек пуст"} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Список карточек пуст"} />
+      </Content>
+    );
   }
   return (
     <>
       <Title>Карточки на утверждение</Title>
       {cardsToAccept.map((card) => (
-        <CardsContainer>
+        <CardsContainer key={card.id}>
           <div key={card.id}>
             <OneCard withHeart={false} key={card.id} cardAbout={card} />
             <ButtonsBlock>

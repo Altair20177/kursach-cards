@@ -4,7 +4,6 @@ import Text from "../generic/Text";
 import Input from "./Input";
 import TextArea from "./TextArea";
 import { useEffect, useState } from "react";
-import Message from "../generic/Message";
 import { OrganizationType } from "../../types";
 import {
   fetchOrganizationByAdmin,
@@ -27,14 +26,12 @@ const { RangePicker } = DatePicker;
 
 export default function AdminInputs() {
   const { pathname } = useLocation();
-
   const [eventName, setEventName] = useState<string>("");
   const [eventDescription, setEventDescription] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [eventAddress, setEventAddress] = useState<string>("");
   const [cardImages, setCardImages] = useState<RcFile[]>([]);
-
   const [organizationName, setOrganizationName] = useState<string>("");
   const [organizationDescription, setOrganizationDescription] =
     useState<string>("");
@@ -134,10 +131,6 @@ export default function AdminInputs() {
       });
     });
   }
-
-  useEffect(() => {
-    console.log(price);
-  }, [price]);
 
   const changeEventDate = (_: any, dateString: [string, string] | string) => {
     setStartDate(dateString[0]);

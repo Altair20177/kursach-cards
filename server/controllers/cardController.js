@@ -1,8 +1,8 @@
-const { Card, Category } = require("../models/models");
+const { Card, Category, Organization, User } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const uuid = require("uuid");
 const path = require("path");
-
+const { transporter } = require("../mailer");
 class CardController {
   async create(req, res, next) {
     try {
@@ -40,9 +40,9 @@ class CardController {
       let fileName2 = uuid.v4() + ".jpg";
       let fileName3 = uuid.v4() + ".jpg";
 
-      photo1.mv(path.resolve(__dirname, "..", "static", fileName1));
-      photo2.mv(path.resolve(__dirname, "..", "static", fileName2));
-      photo3.mv(path.resolve(__dirname, "..", "static", fileName3));
+      photo1?.mv(path.resolve(__dirname, "..", "static", fileName1));
+      photo2?.mv(path.resolve(__dirname, "..", "static", fileName2));
+      photo3?.mv(path.resolve(__dirname, "..", "static", fileName3));
 
       const card = await Card.create({
         cardName,
@@ -139,12 +139,44 @@ class CardController {
         where: { id: cardId },
       }
     );
+    const findCard = await Card.findByPk(cardId);
+    const organization = await Organization.findByPk(
+      findCard.dataValues.organizationId
+    );
+    const user = await User.findByPk(organization.dataValues.userId);
+    console.log(user);
+    transporter.sendMail(
+      {
+        from: process.env.EMAIL,
+        to: user.dataValues.email,
+        subject: "Оформление карточки",
+        html: "<p>Ваша карточка была одобрена администратором</p>",
+      },
+      (error, response) => {
+        console.log(error, response);
+      }
+    );
     return res.json(card);
   }
 
   async rejectCard(req, res) {
     const { cardId } = req.params;
-
+    const findCard = await Card.findByPk(cardId);
+    const organization = await Organization.findByPk(
+      findCard.dataValues.organizationId
+    );
+    const user = await User.findByPk(organization.dataValues.userId);
+    transporter.sendMail(
+      {
+        from: process.env.EMAIL,
+        to: user.dataValues.email,
+        subject: "Оформление карточки",
+        html: `<p>Ваша карточка c названием ${findCard.dataValues.cardName} была отклонена администратором.</p>`,
+      },
+      (error, response) => {
+        console.log(error, response);
+      }
+    );
     const cardToDelete = await Card.destroy({
       where: { id: cardId },
     });

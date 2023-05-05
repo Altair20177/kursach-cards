@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import PrivateRoute from "./PrivateRoute";
 import { Spin } from "antd";
+import { Content } from "antd/es/layout/layout";
 
 const MainMenu = lazy(() => import("../components/mainMenu/MainMenu"));
 const Cards = lazy(() => import("../components/cards/Cards"));
@@ -25,7 +26,21 @@ const CardPage = lazy(() => import("../pages/CardPage"));
 
 export const Routing = () => {
   return (
-    <Suspense fallback={<Spin />}>
+    <Suspense
+      fallback={
+        <Content
+          style={{
+            width: "100vw",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spin tip={"Загрузка  страницы"} />
+        </Content>
+      }
+    >
       <Routes>
         <Route path="/" element={<Navigate to="/main" />} />
         <Route path="/main" element={<MainMenu />} />
@@ -38,6 +53,14 @@ export const Routing = () => {
         <Route path="/cards/:id" element={<CardPage />} />
         <Route path="/news">
           <Route path=":id" element={<NewsIdPage />} />
+          <Route
+            path="create"
+            element={
+              <PrivateRoute accessRoles={["superAdmin"]}>
+                <NewsPageCreate />
+              </PrivateRoute>
+            }
+          />
           <Route index element={<NewsPage />} />
         </Route>
         <Route
@@ -48,14 +71,6 @@ export const Routing = () => {
             </PrivateRoute>
           }
         >
-          <Route
-            path="news-create"
-            element={
-              <PrivateRoute accessRoles={["superAdmin"]}>
-                <NewsPageCreate />
-              </PrivateRoute>
-            }
-          />
           <Route
             path="managing-panel"
             element={

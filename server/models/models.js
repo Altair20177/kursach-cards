@@ -55,6 +55,7 @@ const Organization = sequelize.define("organization", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   //categoryId: { type: DataTypes.INTEGER },
   name: { type: DataTypes.STRING },
+  userId: { type: DataTypes.INTEGER },
   description: { type: DataTypes.STRING },
   photo1: { type: DataTypes.STRING },
   photo2: { type: DataTypes.STRING },

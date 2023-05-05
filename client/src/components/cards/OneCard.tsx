@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  addCardToFavourites,
-  deleteCardFromFavourites,
-} from "../../http/cardApi";
+import { addCardToFavourites } from "../../http/cardApi";
 import { useAppSelector } from "../../store/hooks";
 import { CardType } from "../../types";
-import Message from "../generic/Message";
 import Text from "../generic/Text";
 import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
-import { getUserRole } from "../../store/userSlice";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
 interface OneCardProps {
@@ -36,11 +31,15 @@ export default function OneCard({
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   function addToFavourites(cardId: number) {
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 4000);
+    // setShowMessage(true);
+    // setTimeout(() => setShowMessage(false), 4000);
 
     if (isAuthorized) {
-      addCardToFavourites(cardId, localStorage.getItem("userId"));
+      addCardToFavourites(cardId, localStorage.getItem("userId")).then(() => {
+        notification.success({
+          message: "Карточка добавлена в избранные",
+        });
+      });
     }
   }
   return (
@@ -127,14 +126,13 @@ export default function OneCard({
           </Description>
         </Block>
       )}
-
-      {showMessage && (
+      {/* {showMessage && (
         <Message>
           {isAuthorized
             ? "Карточка добавлена в избранное"
             : "Необходимо авторизоваться!"}
         </Message>
-      )}
+      )} */}
     </>
   );
 }

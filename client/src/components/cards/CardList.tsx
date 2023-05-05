@@ -1,9 +1,9 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import {
   useGetCardsByCategoryQuery,
   useRejectCardMutation,
 } from "../../store/cardApi";
-import { Spin, Empty, notification, Layout, Input, Space, Select } from "antd";
+import { Spin, Empty, notification, Input, Space, Select } from "antd";
 import OneCard from "./OneCard";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
@@ -15,8 +15,29 @@ const { Search } = Input;
 const getSortedCards = (cards: CardType[], sortType: string) =>
   !!cards
     ? [...cards]?.sort((a, b) => {
-        if (sortType === "up") {
-          return -1;
+        if (sortType === "up-start") {
+          return new Date(a.dateTimeStart).getTime() <
+            new Date(b.dateTimeStart).getTime()
+            ? -1
+            : 1;
+        }
+        if (sortType === "down-start") {
+          return new Date(a.dateTimeStart).getTime() >
+            new Date(b.dateTimeStart).getTime()
+            ? -1
+            : 1;
+        }
+        if (sortType === "up-end") {
+          return new Date(a.dateTimeFinish).getTime() <
+            new Date(b.dateTimeFinish).getTime()
+            ? -1
+            : 1;
+        }
+        if (sortType === "down-end") {
+          return new Date(a.dateTimeFinish).getTime() >
+            new Date(b.dateTimeFinish).getTime()
+            ? -1
+            : 1;
         }
         return 0;
       })
@@ -49,9 +70,17 @@ const CardList: FC = () => {
   );
   if (isLoading) {
     return (
-      <Layout>
-        <Spin />;
-      </Layout>
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Spin />
+      </Content>
     );
   }
   if (isError && error) {
@@ -60,7 +89,19 @@ const CardList: FC = () => {
     });
   }
   if (!cards?.length) {
-    return <Empty description={"Карточек на данную категорию нет!"} />;
+    return (
+      <Content
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Empty description={"Карточек на данную категорию нет..."} />
+      </Content>
+    );
   }
   const filteredCards = getSortedCards(
     !!search
@@ -87,11 +128,9 @@ const CardList: FC = () => {
         <Search
           placeholder="Поиск картинок"
           allowClear
-          enterButton="Search"
+          enterButton="Поиск"
           size="large"
-          onSearch={(e) => {
-            setSearch(e);
-          }}
+          onSearch={setSearch}
         />
       </Space>
       <Space>
@@ -99,18 +138,27 @@ const CardList: FC = () => {
           style={{
             width: "300px",
           }}
-          onChange={(e) => {
-            console.log(e);
-            setSortType(e);
-          }}
+          onChange={setSortType}
           options={[
             {
               label: "По умолчанию",
               value: "",
             },
             {
-              label: "По дате",
-              value: "up",
+              label: "По дате начала(по возрастанию)",
+              value: "up-start",
+            },
+            {
+              label: "По дате начала(по убыванию)",
+              value: "down-start",
+            },
+            {
+              label: "По дате окончания(по возрастанию)",
+              value: "up-end",
+            },
+            {
+              label: "По дате окончания(по убыванию)",
+              value: "down-end",
             },
           ]}
           defaultValue={""}
