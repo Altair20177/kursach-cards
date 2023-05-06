@@ -2,7 +2,10 @@ const { Card, Category, Organization, User } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const uuid = require("uuid");
 const path = require("path");
+const xlsx = require("xlsx");
+const fs = require("fs");
 const { transporter } = require("../mailer");
+
 class CardController {
   async create(req, res, next) {
     try {
@@ -181,6 +184,20 @@ class CardController {
       where: { id: cardId },
     });
     return res.json(cardToDelete);
+  }
+
+  async createFromExcel(req, res) {
+    const { document } = req.files;
+    const uploadFilePath = path.resolve(__dirname, "../static", document.name);
+    await document?.mv(uploadFilePath);
+    const bufferData = xlsx.readFile(uploadFilePath);
+    const ws = bufferData.Sheets[bufferData.SheetNames[0]];
+    const rows = xlsx.utils.sheet_to_json(ws);
+    rows.forEach(async (row) => {
+      const card = await Card.create(row);
+      await card.save();
+    });
+    res.json({ message: "Все карточки были добавлены!" });
   }
 }
 

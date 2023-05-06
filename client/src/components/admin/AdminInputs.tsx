@@ -9,7 +9,7 @@ import {
   fetchOrganizationByAdmin,
   updateOrganization,
 } from "../../http/organizationApi";
-import { createCard } from "../../http/cardApi";
+import { createCard, createCardFromExcel } from "../../http/cardApi";
 import {
   DatePicker,
   Button as AntdButton,
@@ -41,7 +41,8 @@ export default function AdminInputs() {
   const [website, setWebsite] = useState<string>("");
   const [price, setPrice] = useState<number>(0.0);
   const [isFree, setIsFree] = useState<boolean>(true);
-  const [organizationImages, setOrganizationImages] = useState<File[]>([]);
+  const [organizationImages, setOrganizationImages] = useState<RcFile[]>([]);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
 
   const [organizationData, setOrganizationData] =
     useState<OrganizationType>(null);
@@ -61,31 +62,14 @@ export default function AdminInputs() {
     }
   }, [organizationData?.id]);
 
-  function condition1() {
-    if (
-      !eventAddress ||
-      !eventName ||
-      !eventDescription ||
-      !startDate ||
-      !endDate ||
-      !eventAddress ||
-      !cardImages
-    )
-      return false;
-    return true;
-  }
-
-  function condition2() {
-    if (
-      !organizationName ||
-      !organizationDescription ||
-      !organizationImages ||
-      !organizationAddress ||
-      !website ||
-      !workTime
-    )
-      return false;
-    return true;
+  function sendExcelCard() {
+    const formData = new FormData();
+    formData.append("document", excelFile!);
+    createCardFromExcel(formData).then((res) => {
+      notification.success({
+        message: res?.message,
+      });
+    });
   }
 
   function sendCard() {
@@ -151,6 +135,31 @@ export default function AdminInputs() {
           <Row>
             {pathname === "/admin/publish-new-card" ? (
               <>
+                <Space
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  <Upload
+                    accept=".xlsx,.xls"
+                    type="drag"
+                    style={{
+                      padding: "0.5rem 1rem",
+                    }}
+                    beforeUpload={() => false}
+                    onChange={(e) => {
+                      setExcelFile(e.fileList[0].originFileObj!);
+                    }}
+                  >
+                    Загрузить Excel файл{" "}
+                  </Upload>
+                  {!!excelFile ? (
+                    <AntdButton onClick={sendExcelCard}>Отправить</AntdButton>
+                  ) : null}
+                </Space>
                 <Input
                   value={eventName}
                   setValue={(e) => setEventName(e.target.value)}

@@ -11,5 +11,6 @@ router.get("/category/:categoryId", cardController.getAllByCategoryId);
 router.get("/byOrganization/:id", cardController.getAllByOrganizationId);
 router.get("/acceptCard/:cardId", cardController.acceptCard);
 router.get("/rejectCard/:cardId", cardController.rejectCard);
+router.post("/excel", cardController.createFromExcel);
 
 module.exports = router;

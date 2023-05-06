@@ -54,3 +54,8 @@ export const fetchRejectCard = async (cardId) => {
   const { data } = await $host.get("api/card/rejectCard/" + cardId);
   return data;
 };
+
+export const createCardFromExcel = async (file) => {
+  const { data } = await $authHost.post(`api/card/excel`, file);
+  return data;
+};
