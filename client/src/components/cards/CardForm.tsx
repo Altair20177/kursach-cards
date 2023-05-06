@@ -34,8 +34,9 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
   const { data: categories } = useGetCategoriesQuery(undefined);
   const userRole = useAppSelector(getUserRole);
   const location = useLocation();
+  console.log();
   const isCreateCard = useMemo(
-    () => location.pathname !== "/publish-new-card",
+    () => location.pathname.includes("publish-new-card"),
     [location.pathname]
   );
   const changeEventDate =
@@ -59,6 +60,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
     <Formik
       initialValues={card}
       onSubmit={(values, { setSubmitting }) => {
+        console.log(values);
         const formData = new FormData();
         Object.entries(values).forEach((entity) => {
           const [key, value] = entity;
@@ -296,7 +298,6 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
               beforeUpload={() => false}
               onChange={(files) => {
                 setValues((prev: any) => {
-                  console.log(prev);
                   const newCard = { ...prev };
                   files.fileList.forEach((file, idx) => {
                     newCard[`photo${idx + 1}`] = file.originFileObj;
@@ -317,7 +318,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
               htmlType="submit"
               danger={!isValid}
             >
-              {isCreateCard ? "Добавить" : "Отправить на редактирование"}
+              {!!isCreateCard ? "Добавить" : "Отправить на редактирование"}
             </Button>
           </AntdForm.Item>
         </Form>

@@ -65,9 +65,7 @@ class OrganizationController {
 
   async getCardsFromOrganization(req, res) {
     const { userId } = req.params;
-    console.log(userId);
     const organization = await Organization.findOne({ where: { userId } });
-    console.log(organization);
 
     const cards = await Card.findAll({
       where: { organizationId: organization?.id },

@@ -9,6 +9,7 @@ import { ReactComponent as HeartSvg } from "../headers/images/heart_1.svg";
 import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
 import { Button, notification } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { getImageUrl } from "../../utils/url";
 
 interface OneCardProps {
   cardAbout: CardType;
@@ -147,7 +148,7 @@ const Image = styled.div<{ src: string }>`
   height: 230px;
   width: 100%;
   margin-bottom: 10px;
-  background-image: url(${(p) => "http://localhost:5000/" + p.src});
+  background-image: url(${(p) => `${getImageUrl(p.src)}`});
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

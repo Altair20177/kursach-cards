@@ -96,7 +96,6 @@ class CardController {
   async getCardById(req, res, next) {
     try {
       const { id } = req.params;
-      console.log("wtf");
       const card = await Card.findByPk(id);
       res.json(card);
     } catch (e) {
@@ -107,8 +106,21 @@ class CardController {
   async updateCard(req, res, next) {
     try {
       const { id } = req.params;
+      const { photo1, photo2, photo3 } = req.files;
+      let fileName1 = uuid.v4() + ".jpg";
+      let fileName2 = uuid.v4() + ".jpg";
+      let fileName3 = uuid.v4() + ".jpg";
+      photo1?.mv(path.resolve(__dirname, "..", "static", fileName1));
+      photo2?.mv(path.resolve(__dirname, "..", "static", fileName2));
+      photo3?.mv(path.resolve(__dirname, "..", "static", fileName3));
       const card = await Card.update(
-        { ...req.body },
+        {
+          ...req.body,
+          photo1: fileName1,
+          photo2: fileName2,
+          photo3: fileName3,
+          toAccept: true,
+        },
         {
           where: { id },
         }
@@ -147,7 +159,6 @@ class CardController {
       findCard.dataValues.organizationId
     );
     const user = await User.findByPk(organization.dataValues.userId);
-    console.log(user);
     transporter.sendMail(
       {
         from: process.env.EMAIL,
