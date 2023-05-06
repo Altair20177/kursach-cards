@@ -4,7 +4,7 @@ import Text from "../generic/Text";
 import Input from "./Input";
 import TextArea from "./TextArea";
 import { useEffect, useState } from "react";
-import { OrganizationType } from "../../types";
+import { CardType, OrganizationType } from "../../types";
 import {
   fetchOrganizationByAdmin,
   updateOrganization,
@@ -21,6 +21,7 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
 import dayjs from "dayjs";
+import CardForm from "../cards/CardForm";
 
 const { RangePicker } = DatePicker;
 
@@ -116,11 +117,6 @@ export default function AdminInputs() {
     });
   }
 
-  const changeEventDate = (_: any, dateString: [string, string] | string) => {
-    setStartDate(dateString[0]);
-    setEndDate(dateString[1]);
-  };
-
   const changeWorktimeDate = (
     _: any,
     dateString: [string, string] | string
@@ -135,7 +131,25 @@ export default function AdminInputs() {
           <Row>
             {pathname === "/admin/publish-new-card" ? (
               <>
-                <Space
+                <CardForm
+                  card={{
+                    id: 0,
+                    categoryId: 0,
+                    cardName: "",
+                    description: "",
+                    webSite: "",
+                    eventAddress: "",
+                    dateTimeStart: "",
+                    dateTimeFinish: "",
+                    photo1: "",
+                    photo2: "",
+                    photo3: "",
+                    isFree: false,
+                    toAccept: false,
+                    price: 0,
+                  }}
+                />
+                {/* <Space
                   style={{
                     display: "flex",
                     justifyContent: "center",
@@ -236,7 +250,7 @@ export default function AdminInputs() {
                 />
                 <Button onClick={sendCard}>
                   <Text size={16}>Отправить на утверждение</Text>
-                </Button>
+                </Button> */}
               </>
             ) : (
               <>
@@ -307,6 +321,7 @@ export default function AdminInputs() {
                 listType="picture"
                 maxCount={5}
                 beforeUpload={() => false}
+                accept="image/*"
                 onChange={(e) => {
                   setOrganizationImages(
                     e.fileList.map((file) => file.originFileObj) as RcFile[]
@@ -348,6 +363,7 @@ export default function AdminInputs() {
                   );
                 }}
                 multiple
+                accept="image/*"
               >
                 <AntdButton icon={<UploadOutlined />}>
                   Загрузить 3 картинки

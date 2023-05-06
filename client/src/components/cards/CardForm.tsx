@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { CardType } from "../../types";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
@@ -20,6 +20,8 @@ import { useGetCategoriesQuery } from "../../store/categoryApi";
 import { useAppSelector } from "../../store/hooks";
 import { getUserRole } from "../../store/userSlice";
 import CardDetails from "./CardDetails";
+import { useLocation } from "react-router-dom";
+import { createCard } from "../../http/cardApi";
 
 const { RangePicker } = DatePicker;
 
@@ -31,19 +33,24 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
   const [fetchUpdatecard] = useUpdateCardMutation();
   const { data: categories } = useGetCategoriesQuery(undefined);
   const userRole = useAppSelector(getUserRole);
+  const location = useLocation();
+  const isCreateCard = useMemo(
+    () => location.pathname !== "/publish-new-card",
+    [location.pathname]
+  );
   const changeEventDate =
-    (setValues: any) => (_: any, dateString: [string, string] | string) => {
-      console.log(dateString);
+    (values: any, setValues: any) =>
+    (_: any, dateString: [string, string] | string) => {
       setValues({
-        ...card,
+        ...values,
         dateTimeStart: dateString[0],
-        dateTimeEnd: dateString[1],
+        dateTimeFinish: dateString[1],
       });
     };
   if (!(userRole === "superAdmin" || userRole === "admin")) {
     return <CardDetails card={card} />;
   }
-  if (card?.toAccept) {
+  if (isCreateCard && card?.toAccept) {
     notification.info({
       message: "Внимание! Данная карточка пока не одобрена администратором",
     });
@@ -58,6 +65,22 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
           formData.append(key, value as any);
         });
         formData.set("toAccept", "true");
+        formData.delete("id");
+        if (isCreateCard) {
+          createCard(formData).then((res) => {
+            setSubmitting(false);
+            if ("error" in res) {
+              notification.error({
+                message: (res.error as any)?.data?.message,
+              });
+              return;
+            }
+            notification.success({
+              message: "Карточка успешно добавлена!",
+            });
+          });
+          return;
+        }
         fetchUpdatecard({
           id: card.id,
           card: formData as unknown as CardType,
@@ -80,6 +103,8 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
           const [key, value] = entity;
           if (
             ![
+              "id",
+              "categoryId",
               "isFree",
               "photo1",
               "photo2",
@@ -173,7 +198,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
               ]}
               showTime={{ format: "HH:mm" }}
               format="YYYY-MM-DD HH:mm"
-              onChange={changeEventDate(setValues)}
+              onChange={changeEventDate(values, setValues)}
               style={{
                 width: "100%",
               }}
@@ -270,12 +295,17 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
             <Upload
               beforeUpload={() => false}
               onChange={(files) => {
-                //   setValues({
-                //     ...values,
-                //     image: files.fileList[0].originFileObj!,
-                //   });
+                setValues((prev: any) => {
+                  console.log(prev);
+                  const newCard = { ...prev };
+                  files.fileList.forEach((file, idx) => {
+                    newCard[`photo${idx + 1}`] = file.originFileObj;
+                  });
+                  return newCard;
+                });
               }}
               maxCount={3}
+              accept="image/*"
             >
               <Button icon={<UploadOutlined />}>Загрузить картинку</Button>
             </Upload>
@@ -287,7 +317,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
               htmlType="submit"
               danger={!isValid}
             >
-              Отправить на редактирование
+              {isCreateCard ? "Добавить" : "Отправить на редактирование"}
             </Button>
           </AntdForm.Item>
         </Form>

@@ -88,9 +88,6 @@ export default function OneCard({
                 .reverse()
                 .join("-")}
             </Text>
-            <Text color="rgba(31, 31, 31, 0.79)" size={9} ls={0.115}>
-              {cardAbout.workingTime}
-            </Text>
             <Footer
               style={{
                 display: "flex",

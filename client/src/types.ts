@@ -27,7 +27,6 @@ export type CardType = {
   eventAddress: string;
   dateTimeStart: string;
   dateTimeFinish: string;
-  workingTime: string;
   photo1: string;
   photo2: string;
   photo3: string;
