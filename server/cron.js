@@ -3,7 +3,7 @@ const cron = require("node-cron");
 const mailerService = require("./service/MailerService");
 
 const sendMailBeforeEventTask = cron.schedule(
-  "*/5 * * * * *",
+  "*/30 * * * * *",
   async () => {
     console.log(chalk.blue("Идет отправка писем за 8 часов до события"));
     await mailerService.getUsersToNotify();
@@ -14,7 +14,7 @@ const sendMailBeforeEventTask = cron.schedule(
 );
 
 const removeExpiredEvents = cron.schedule(
-  "*/5 * * * * *",
+  "*/30 * * * * *",
   async () => {
     console.log(chalk.red("Идет удаление прошедших ивентов!!!".toUpperCase()));
     await mailerService.removeExpiredCards();
