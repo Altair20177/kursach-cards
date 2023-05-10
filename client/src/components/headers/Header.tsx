@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { authorizeUser, setUserData } from "../../store/userSlice";
+import { authorizeUser, getUserRole, setUserData } from "../../store/userSlice";
 import Message from "../generic/Message";
 import ModalContainer from "../generic/ModalContainer";
 import Text from "../generic/Text";
@@ -23,6 +23,7 @@ export default function Header({ size }: HeaderProps) {
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   const { isAuthorized, userData } = useAppSelector((store) => store.user);
+  const userRole = useAppSelector(getUserRole);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ export default function Header({ size }: HeaderProps) {
             <p></p>
           )}
           <RightMenu>
+            {userRole === "user" || !userRole ? <Weather size={size} /> : null}
             {isAuthorized && userData?.userRole !== "user" && (
               <Button
                 onClick={() =>
@@ -100,7 +102,6 @@ export default function Header({ size }: HeaderProps) {
             </Text>
           </About>
         )}
-        <Weather />
       </HeaderBlock>
       <ModalContainer
         setIsAuth={setIsAuth}

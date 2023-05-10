@@ -106,6 +106,19 @@ class CardController {
   async updateCard(req, res, next) {
     try {
       const { id } = req.params;
+      if (!req.files) {
+        const card = await Card.update(
+          {
+            ...req.body,
+            toAccept: true,
+          },
+          {
+            where: { id },
+            raw: true,
+          }
+        );
+        res.json(card);
+      }
       const { photo1, photo2, photo3 } = req.files;
       let fileName1 = uuid.v4() + ".jpg";
       let fileName2 = uuid.v4() + ".jpg";
@@ -123,6 +136,7 @@ class CardController {
         },
         {
           where: { id },
+          raw: true,
         }
       );
       res.json(card);
@@ -152,17 +166,20 @@ class CardController {
       },
       {
         where: { id: cardId },
+        raw: true,
       }
     );
-    const findCard = await Card.findByPk(cardId);
-    const organization = await Organization.findByPk(
-      findCard.dataValues.organizationId
-    );
-    const user = await User.findByPk(organization.dataValues.userId);
+    const findCard = await Card.findByPk(cardId, { raw: true });
+    const organization = await Organization.findByPk(findCard.organizationId, {
+      raw: true,
+    });
+    const user = await User.findByPk(organization.userId, {
+      raw: true,
+    });
     transporter.sendMail(
       {
         from: process.env.EMAIL,
-        to: user.dataValues.email,
+        to: user.email,
         subject: "Оформление карточки",
         html: "<p>Ваша карточка была одобрена администратором</p>",
       },
@@ -175,17 +192,17 @@ class CardController {
 
   async rejectCard(req, res) {
     const { cardId } = req.params;
-    const findCard = await Card.findByPk(cardId);
-    const organization = await Organization.findByPk(
-      findCard.dataValues.organizationId
-    );
-    const user = await User.findByPk(organization.dataValues.userId);
+    const findCard = await Card.findByPk(cardId, { raw: true });
+    const organization = await Organization.findByPk(findCard.organizationId, {
+      raw: true,
+    });
+    const user = await User.findByPk(organization.userId);
     transporter.sendMail(
       {
         from: process.env.EMAIL,
-        to: user.dataValues.email,
+        to: user.email,
         subject: "Оформление карточки",
-        html: `<p>Ваша карточка c названием ${findCard.dataValues.cardName} была отклонена администратором.</p>`,
+        html: `<p>Ваша карточка c названием ${findCard.cardName} была отклонена администратором.</p>`,
       },
       (error, response) => {
         console.log(error, response);

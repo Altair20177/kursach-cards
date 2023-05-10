@@ -148,6 +148,7 @@ export default function AdminInputs() {
                     toAccept: false,
                     price: 0,
                   }}
+                  organizationData={organizationData}
                 />
                 {/* <Space
                   style={{

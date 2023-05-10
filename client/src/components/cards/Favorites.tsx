@@ -14,7 +14,7 @@ export default function Favorites() {
 
   useEffect(() => {
     fetchFavouritesCardsByUserId(localStorage.getItem("userId")).then((data) =>
-      setFavouritesCards(data)
+      setFavouritesCards(data.filter(Boolean))
     );
   }, []);
 
@@ -30,7 +30,6 @@ export default function Favorites() {
       }
     );
   }
-
   return (
     <>
       <Title>Избранное</Title>
