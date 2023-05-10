@@ -10,6 +10,7 @@ import ModalRegAuth from "../modal/ModalRegAuth";
 import ModalRequest from "../modal/ModalRequest";
 import back from "./images/header_back_1.png";
 import heartSvg from "./images/heart_1.svg";
+import Weather from "./Weather";
 
 interface HeaderProps {
   size: "small" | "big";
@@ -99,6 +100,7 @@ export default function Header({ size }: HeaderProps) {
             </Text>
           </About>
         )}
+        <Weather />
       </HeaderBlock>
       <ModalContainer
         setIsAuth={setIsAuth}
