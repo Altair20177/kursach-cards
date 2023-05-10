@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 const router = require("./routes/index");
 const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 const path = require("path");
-const { sendMailBeforeEventTask } = require("./cron");
+const { initSchedules, stopSchedules } = require("./cron");
 
 const app = express();
 
@@ -25,11 +25,12 @@ const start = async () => {
     await sequelize.sync();
     app.listen(PORT, () => {
       console.log(`server started ${PORT}`);
-      sendMailBeforeEventTask.start();
+      initSchedules();
     });
   } catch (e) {
     console.log(e);
-    sendMailBeforeEventTask.stop();
+    stopSchedules();
+    process.exit(-1);
   }
 };
 

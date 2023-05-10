@@ -75,6 +75,15 @@ class MailerService {
       console.log(chalk.red("mailer has returned error: ", err));
     }
   }
+  async removeExpiredCards() {
+    await Card.destroy({
+      where: {
+        dateTimeFinish: {
+          [Op.lt]: Sequelize.literal("NOW()"),
+        },
+      },
+    });
+  }
 }
 
 module.exports = new MailerService();
