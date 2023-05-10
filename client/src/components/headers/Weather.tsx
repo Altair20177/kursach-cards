@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { IWeather } from "./types";
 import { Image, Space, Typography } from "antd";
@@ -22,11 +22,7 @@ const contentStyles: CSSProperties = {
   marginLeft: 20,
 };
 
-interface WeatherProps {
-  size: "small" | "big";
-}
-
-const Weather: FC<WeatherProps> = ({ size }) => {
+const Weather = () => {
   const [weather, setWeather] = useState<IWeather | null>(null);
   useEffect(() => {
     axios
@@ -38,16 +34,6 @@ const Weather: FC<WeatherProps> = ({ size }) => {
       });
   }, []);
   console.log(weather);
-  if (size === "small") {
-    return !!weather?.weather ? (
-      <Image
-        src={`http://openweathermap.org/img/wn/${weather?.weather[0].icon}.png`}
-        alt=""
-        preview={false}
-        title={weather?.weather[0].description}
-      />
-    ) : null;
-  }
   return (
     <Content style={contentStyles}>
       <Typography style={typographyStyles}>

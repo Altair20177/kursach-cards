@@ -35,6 +35,7 @@ class MailerService {
         raw: true,
       });
       const usersId = new Set([...organizations].map((org) => org.userId));
+      console.log(usersId);
       const users = await User.findAll({
         where: {
           id: [...usersId],

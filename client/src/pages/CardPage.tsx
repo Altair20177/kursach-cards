@@ -4,18 +4,10 @@ import { useParams } from "react-router-dom";
 import { useGetCardByIdQuery } from "../store/cardApi";
 import { Content } from "antd/es/layout/layout";
 import CardForm from "../components/cards/CardForm";
-import { useEffect, useState } from "react";
-import { fetchOrganizationByAdmin } from "../http/organizationApi";
 
 const CardPage = () => {
   const { id } = useParams();
   const { data: card, isLoading, isError, error } = useGetCardByIdQuery(id!);
-  const [organizationId, setOrganizationId] = useState<number>(0);
-  useEffect(() => {
-    fetchOrganizationByAdmin(localStorage.getItem("userId")).then((data) =>
-      setOrganizationId(data?.id)
-    );
-  }, []);
   if (isLoading) {
     return (
       <Content
@@ -68,7 +60,7 @@ const CardPage = () => {
         paddingTop: "100px",
       }}
     >
-      <CardForm card={{ ...card!, organizationId }} />
+      <CardForm card={card!} />
     </Content>
   );
 };

@@ -10,7 +10,6 @@ import { ReactComponent as RedHeartSvg } from "../headers/images/red_heart.svg";
 import { Button, notification } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { getImageUrl } from "../../utils/url";
-import { getUserRole } from "../../store/userSlice";
 
 interface OneCardProps {
   cardAbout: CardType;
@@ -29,7 +28,7 @@ export default function OneCard({
 }: OneCardProps) {
   const { isAuthorized } = useAppSelector((store) => store.user);
   const navigate = useNavigate();
-  const userRole = useAppSelector(getUserRole);
+
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   function addToFavourites(cardId: number) {
@@ -117,8 +116,7 @@ export default function OneCard({
             <Button onClick={() => navigate(`/cards/${cardAbout?.id}`)}>
               Подробнее
             </Button>
-            {(userRole === "admin" || userRole === "superAdmin") &&
-            onDeleteCard ? (
+            {onDeleteCard ? (
               <Button onClick={() => onDeleteCard!(cardAbout.id)}>
                 <DeleteOutlined />
               </Button>

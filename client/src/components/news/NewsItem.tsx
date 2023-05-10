@@ -17,7 +17,7 @@ const NewsItem: FC<NewsItemProps> = ({ newItem, removeNews, canRemove }) => {
     <Card
       extra={<Link to={`/news/${id}`}>Подробнее</Link>}
       hoverable
-      style={{ width: 240, wordWrap: "break-word" }}
+      style={{ width: 240 }}
       key={id}
       actions={[
         canRemove ? (

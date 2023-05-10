@@ -21,7 +21,6 @@ export type CategoryTypeFetch = {
 export type CardType = {
   id: number;
   categoryId: number;
-  organizationId?: number;
   cardName: string;
   description: string;
   webSite: string;
