@@ -6,7 +6,7 @@ const sendMailBeforeEventTask = cron.schedule(
   "*/5 * * * * *",
   async () => {
     console.log(chalk.blue("Идет отправка писем за 8 часов до события"));
-    // await mailerService.getUsersToNotify();
+    await mailerService.getUsersToNotify();
   },
   {
     scheduled: false,
