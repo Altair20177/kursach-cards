@@ -25,11 +25,11 @@ const start = async () => {
     await sequelize.sync();
     app.listen(PORT, () => {
       console.log(`server started ${PORT}`);
-      // initSchedules();
+      initSchedules();
     });
   } catch (e) {
     console.log(e);
-    // stopSchedules();
+    stopSchedules();
     process.exit(-1);
   }
 };
