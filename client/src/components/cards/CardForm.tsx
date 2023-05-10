@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react";
-import { CardType } from "../../types";
+import { CardType, OrganizationType } from "../../types";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
   notification,
@@ -27,14 +27,14 @@ const { RangePicker } = DatePicker;
 
 interface CardFormProps {
   card: CardType;
+  organizationData?: OrganizationType;
 }
 
-const CardForm: FC<CardFormProps> = ({ card }) => {
+const CardForm: FC<CardFormProps> = ({ card, organizationData }) => {
   const [fetchUpdatecard] = useUpdateCardMutation();
   const { data: categories } = useGetCategoriesQuery(undefined);
   const userRole = useAppSelector(getUserRole);
   const location = useLocation();
-  console.log();
   const isCreateCard = useMemo(
     () => location.pathname.includes("publish-new-card"),
     [location.pathname]
@@ -60,7 +60,6 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
     <Formik
       initialValues={card}
       onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
         const formData = new FormData();
         Object.entries(values).forEach((entity) => {
           const [key, value] = entity;
@@ -68,6 +67,10 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
         });
         formData.set("toAccept", "true");
         formData.delete("id");
+        formData.set(
+          "organizationId",
+          String(card?.organizationId || organizationData?.id)
+        );
         if (isCreateCard) {
           createCard(formData).then((res) => {
             setSubmitting(false);
@@ -107,6 +110,7 @@ const CardForm: FC<CardFormProps> = ({ card }) => {
             ![
               "id",
               "categoryId",
+              "organizationId",
               "isFree",
               "photo1",
               "photo2",
